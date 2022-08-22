@@ -1,0 +1,11 @@
+version = 0.1
+[default]
+[default.deploy]
+[default.deploy.parameters]
+stack_name = "appsync-app"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-x1ls68xl327x"
+s3_prefix = "appsync-app"
+region = "us-east-1"
+capabilities = "CAPABILITY_IAM"
+disable_rollback = true
+image_repositories = []
