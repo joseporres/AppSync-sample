@@ -18,7 +18,32 @@
                 "ProjectionExpression" :  "age"
             },
             "ResultPath":"$.result",
-            "Next": "Sum Ten to Age"
+            "Next": "Age Exist or not"
+        },
+        "Age Exist or not":{
+            "Type": "Choice",
+            "Choices" : [
+                {
+                    "Variable": "$.result.Item.age",
+                    "IsPresent": false,
+                    "Next": "Default Age" 
+                }
+            ],
+            "Default" : "Sum Ten to Age"
+
+        },
+        "Default Age":{
+            "Type": "Pass",
+            "Parameters": {
+                "result": {
+                    "Item":{
+                        "age": {
+                            "N" : "20"
+                        }
+                    }
+                }
+            },
+            "Next" : "Sum Ten to Age"
         },
         "Sum Ten to Age" : {
             "Type": "Task",
