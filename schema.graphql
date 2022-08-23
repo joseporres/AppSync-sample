@@ -6,6 +6,12 @@ type Student{
     id: String!
     sk: String!
     name: String
+    age: Int
+    agePlus: Int
+}
+
+type Execution{
+    output: String
 }
 
 type Query{
@@ -14,6 +20,7 @@ type Query{
 }
 
 type Mutation{
+    addPlus(id: String!, sk: String!): Execution,
     createStudent(name: String!, id: String!, sk: String!): Student,
     updateStudent(name: String!, id: String!, sk: String!): Student,
     deleteStudent(id: String!, sk: String!): Student,

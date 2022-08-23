@@ -1,0 +1,322 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: 'Prueba de CRUD
+
+  '
+Resources:
+  AppSyncServiceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - appsync.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      Policies:
+      - PolicyName: AllowAccessForAppsyncResolvers
+        PolicyDocument:
+          Version: 2012-10-17
+          Statement:
+          - Effect: Allow
+            Action:
+            - states:StartSyncExecution
+            Resource:
+            - Ref: PlusTenStateMachine
+          - Effect: Allow
+            Action:
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:DeleteItem
+            - dynamodb:UpdateItem
+            - dynamodb:Query
+            - dynamodb:Scan
+            Resource:
+            - Fn::GetAtt:
+              - DynamoStudentsTable
+              - Arn
+            - Fn::Sub:
+              - ${Table}/index/*
+              - Table:
+                  Fn::GetAtt:
+                  - DynamoStudentsTable
+                  - Arn
+  AppSyncApi:
+    DependsOn: AppSyncServiceRole
+    Type: AWS::AppSync::GraphQLApi
+    Description: The GraphQL API for the single table App
+    Properties:
+      Name: university-appsync
+      AuthenticationType: API_KEY
+  AppSyncApiKey:
+    Type: AWS::AppSync::ApiKey
+    Properties:
+      ApiId:
+        Fn::GetAtt:
+        - AppSyncApi
+        - ApiId
+  AppSyncSchema:
+    Type: AWS::AppSync::GraphQLSchema
+    Properties:
+      ApiId:
+        Fn::GetAtt:
+        - AppSyncApi
+        - ApiId
+      DefinitionS3Location: ../../schema.graphql
+  AppSyncStudentsDataSource:
+    Type: AWS::AppSync::DataSource
+    Properties:
+      Name: SingleTableStudentDataSource
+      ApiId:
+        Fn::GetAtt:
+        - AppSyncApi
+        - ApiId
+      Description: The Single Table AppSync Data Source
+      Type: AMAZON_DYNAMODB
+      ServiceRoleArn:
+        Fn::GetAtt:
+        - AppSyncServiceRole
+        - Arn
+      DynamoDBConfig:
+        TableName:
+          Ref: DynamoStudentsTable
+        AwsRegion:
+          Fn::Sub: ${AWS::Region}
+  AppSyncGetAllResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn: AppSyncSchema
+    Properties:
+      ApiId:
+        Fn::GetAtt:
+        - AppSyncApi
+        - ApiId
+      TypeName: Query
+      FieldName: getStudents
+      DataSourceName:
+        Fn::GetAtt:
+        - AppSyncStudentsDataSource
+        - Name
+      RequestMappingTemplate: "{\n  \"version\": \"2018-05-29\",\n  \"operation\"\
+        : \"Query\",\n  \"query\": {\n      \"expression\": \"id = :id\", \n     \
+        \ \"expressionValues\":\t{              \n        \":id\" : $util.dynamodb.toDynamoDBJson(\"\
+        ESTUDIANTE\")\n      }\n    }\n}\n"
+      ResponseMappingTemplate: "[\n  #foreach($item in $ctx.result.items)\n    {\n\
+        \        \"sk\":$util.toJson($item['sk']),\n        \"id\": $util.toJson($item['id']),\n\
+        \        \"name\": $util.toJson($item['name'])\n    }#if($foreach.hasNext),#end\n\
+        \    #end\n]\n"
+  AppSyncGetStudentResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn: AppSyncSchema
+    Properties:
+      ApiId:
+        Fn::GetAtt:
+        - AppSyncApi
+        - ApiId
+      TypeName: Query
+      FieldName: getStudent
+      DataSourceName:
+        Fn::GetAtt:
+        - AppSyncStudentsDataSource
+        - Name
+      RequestMappingTemplate: "{\n  \"version\": \"2017-02-28\",\n  \"operation\"\
+        : \"GetItem\",\n  \"key\": {\n    \"id\": $util.dynamodb.toDynamoDBJson($ctx.args.id),\n\
+        \    \"sk\": $util.dynamodb.toDynamoDBJson($ctx.args.sk)\n  }\n}\n"
+      ResponseMappingTemplate: "{\n  \"sk\":$util.toJson($ctx.result.sk),\n  \"id\"\
+        : $util.toJson($ctx.result.id),\n  \"name\": $util.toJson($ctx.result.name)\n\
+        }\n"
+  AppSyncCreateStudentResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn: AppSyncSchema
+    Properties:
+      ApiId:
+        Fn::GetAtt:
+        - AppSyncApi
+        - ApiId
+      TypeName: Mutation
+      FieldName: createStudent
+      DataSourceName:
+        Fn::GetAtt:
+        - AppSyncStudentsDataSource
+        - Name
+      RequestMappingTemplate: "{\n  \"version\": \"2017-02-28\",\n  \"operation\"\
+        : \"PutItem\",\n  \"key\": {\n    \"id\": $util.dynamodb.toDynamoDBJson($context.args.id),\n\
+        \    \"sk\": $util.dynamodb.toDynamoDBJson($context.args.sk)\n  },\n  \"attributeValues\"\
+        : {\n    \"name\": $util.dynamodb.toDynamoDBJson($context.args.name)\n  }\n\
+        }\n"
+      ResponseMappingTemplate: "{\n  \"sk\":$util.toJson($ctx.result.sk),\n  \"id\"\
+        : $util.toJson($ctx.result.id),\n  \"name\": $util.toJson($ctx.result.name)\n\
+        }\n"
+  AppSyncUpdateStudentResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn: AppSyncSchema
+    Properties:
+      ApiId:
+        Fn::GetAtt:
+        - AppSyncApi
+        - ApiId
+      TypeName: Mutation
+      FieldName: updateStudent
+      DataSourceName:
+        Fn::GetAtt:
+        - AppSyncStudentsDataSource
+        - Name
+      RequestMappingTemplate: "{\n  \"version\": \"2017-02-28\",\n  \"operation\"\
+        : \"UpdateItem\",\n  \"key\": {\n    \"id\": $util.dynamodb.toDynamoDBJson($ctx.args.id),\n\
+        \    \"sk\": $util.dynamodb.toDynamoDBJson($ctx.args.sk)\n  },\n  \"update\"\
+        : {\n    \"expression\": \"set #name = :name\",\n    \"expressionNames\":\
+        \ {\n      \"#name\": \"name\"\n    },\n    \"expressionValues\": {\n    \
+        \ \":name\": $util.dynamodb.toDynamoDBJson($ctx.args.name)\n    }\n  }\n}\n"
+      ResponseMappingTemplate: "{\n  \"sk\":$util.toJson($ctx.result.sk),\n  \"id\"\
+        : $util.toJson($ctx.result.id),\n  \"name\": $util.toJson($ctx.result.name)\n\
+        }\n"
+  AppSyncDeleteStudentResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn: AppSyncSchema
+    Properties:
+      ApiId:
+        Fn::GetAtt:
+        - AppSyncApi
+        - ApiId
+      TypeName: Mutation
+      FieldName: deleteStudent
+      DataSourceName:
+        Fn::GetAtt:
+        - AppSyncStudentsDataSource
+        - Name
+      RequestMappingTemplate: "{\n  \"version\": \"2017-02-28\",\n  \"operation\"\
+        : \"DeleteItem\",\n  \"key\": {\n    \"id\": $util.dynamodb.toDynamoDBJson($ctx.args.id),\n\
+        \    \"sk\": $util.dynamodb.toDynamoDBJson($ctx.args.sk)\n  }\n}\n"
+      ResponseMappingTemplate: "{\n  \"sk\":$util.toJson($ctx.result.sk),\n  \"id\"\
+        : $util.toJson($ctx.result.id),\n  \"name\": $util.toJson($ctx.result.name)\n\
+        }\n"
+  StepFunctionsHttpDataSource:
+    Type: AWS::AppSync::DataSource
+    Properties:
+      ApiId:
+        Fn::GetAtt:
+        - AppSyncApi
+        - ApiId
+      Name: StepFunctionsHttpDataSource
+      Description: Step Functions HTTP
+      Type: HTTP
+      ServiceRoleArn:
+        Fn::GetAtt:
+        - AppSyncServiceRole
+        - Arn
+      HttpConfig:
+        Endpoint:
+          Fn::Sub: https://sync-states.${AWS::Region}.amazonaws.com/
+        AuthorizationConfig:
+          AuthorizationType: AWS_IAM
+          AwsIamConfig:
+            SigningRegion:
+              Ref: AWS::Region
+            SigningServiceName: states
+  PlusTenFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: makefile
+      SamResourceId: PlusTenFunction
+    Properties:
+      Handler: handler
+      Runtime: go1.x
+      CodeUri: PlusTenFunction
+  CreateStudentPlusResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn: AppSyncSchema
+    Properties:
+      ApiId:
+        Fn::GetAtt:
+        - AppSyncApi
+        - ApiId
+      TypeName: Mutation
+      FieldName: addPlus
+      DataSourceName:
+        Fn::GetAtt:
+        - StepFunctionsHttpDataSource
+        - Name
+      RequestMappingTemplate:
+        Fn::Sub: "{\n  \"version\": \"2018-05-29\",\n  \"method\": \"POST\",\n  \"\
+          resourcePath\": \"/\",\n  \"params\": {\n    \"headers\": {\n      \"content-type\"\
+          : \"application/x-amz-json-1.0\",\n      \"x-amz-target\":\"AWSStepFunctions.StartSyncExecution\"\
+          \n    },\n    \"body\": {\n      \"stateMachineArn\": \"${PlusTenStateMachine}\"\
+          ,\n      \"input\": \"{ \\\"id\\\": $util.escapeJavaScript($util.toJson($ctx.args.id)),\
+          \ \\\"sk\\\": $util.escapeJavaScript($util.toJson($ctx.args.sk))}\"\n  \
+          \  }\n  }\n}\n"
+      ResponseMappingTemplate: $ctx.result.body
+  PlusTenStateMachine:
+    Type: AWS::Serverless::StateMachine
+    Properties:
+      DefinitionUri: ../../statemachines/plusten.asl.json
+      Type: EXPRESS
+      DefinitionSubstitutions:
+        DBGetStudent:
+          Fn::Sub: arn:${AWS::Partition}:states:::dynamodb:getItem
+        DBUpdateStudent:
+          Fn::Sub: arn:${AWS::Partition}:states:::dynamodb:updateItem
+        PlusTenFunctionArn:
+          Fn::GetAtt:
+          - PlusTenFunction
+          - Arn
+        TableName:
+          Ref: DynamoStudentsTable
+      Logging:
+        Destinations:
+        - CloudWatchLogsLogGroup:
+            LogGroupArn:
+              Fn::GetAtt:
+              - PlusTenLogs
+              - Arn
+        IncludeExecutionData: true
+        Level: ALL
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName:
+            Ref: DynamoStudentsTable
+      - LambdaInvokePolicy:
+          FunctionName:
+            Ref: PlusTenFunction
+      - CloudWatchLogsFullAccess
+  PlusTenLogs:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName:
+        Fn::Sub: /aws/vendedlogs/states/${AWS::StackName}/PlusTen
+      RetentionInDays: 3
+  DynamoStudentsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: StudentsTable
+      AttributeDefinitions:
+      - AttributeName: id
+        AttributeType: S
+      - AttributeName: sk
+        AttributeType: S
+      KeySchema:
+      - AttributeName: id
+        KeyType: HASH
+      - AttributeName: sk
+        KeyType: RANGE
+      BillingMode: PAY_PER_REQUEST
+Outputs:
+  APIKey:
+    Description: API Key
+    Value:
+      Fn::GetAtt:
+      - AppSyncApiKey
+      - ApiKey
+  GraphQLApiEndpoint:
+    Description: The URL to the GraphQL Endpoint
+    Value:
+      Fn::GetAtt:
+      - AppSyncApi
+      - GraphQLUrl
+  GraphQLApiId:
+    Description: The API ID of the GraphQL API
+    Value:
+      Fn::GetAtt:
+      - AppSyncApi
+      - ApiId

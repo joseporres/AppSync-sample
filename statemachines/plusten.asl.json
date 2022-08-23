@@ -1,0 +1,64 @@
+{
+    "Comment": "PlusTen",
+    "StartAt": "Get current Age",
+    "States": {
+        "Get current Age": {
+            "Type": "Task",
+            "Resource": "${DBGetStudent}",
+            "Parameters": {
+                "TableName": "${TableName}",
+                "Key": {
+                    "id": {
+                        "S.$" : "$$.Execution.Input.id"
+                    },
+                    "sk": {
+                        "S.$" : "$$.Execution.Input.sk"
+                    }
+                },
+                "ProjectionExpression" :  "age"
+            },
+            "ResultPath":"$.result",
+            "Next": "Sum Ten to Age"
+        },
+        "Sum Ten to Age" : {
+            "Type": "Task",
+            "Resource" : "${PlusTenFunctionArn}",
+            "Parameters": {
+                "Age.$": "$.result.Item.age"
+            },
+            "ResultPath" : "$.result2",
+            "Next": "Add Plus Ten Age"
+        },
+        "Add Plus Ten Age" : {
+            "Type": "Task",
+            "Resource": "${DBUpdateStudent}",
+            "Parameters":{
+                "TableName" : "${TableName}",
+                "Key" : {
+                    "id": {
+                        "S.$": "$$.Execution.Input.id" 
+                    },
+                    "sk" : {
+                        "S.$": "$$.Execution.Input.sk"
+                    }
+                },
+                "ExpressionAttributeValues": {
+                    ":agePlus": {
+                        "N.$": "States.Format('{}',$.result2.agePlus)"
+                    }
+                },
+                "ReturnValues":"ALL_NEW",
+                "UpdateExpression": "SET agePlus = :agePlus"
+            },
+            "Next": "End Step Function"
+        },
+        "End Step Function" : {
+            "Type": "Pass",
+            "Parameters": {
+                "respuesta": "SI"
+            },
+            "OutputPath": "$",
+            "End": true  
+        }
+    }
+}
