@@ -17,14 +17,14 @@
                 },
                 "ProjectionExpression" :  "age"
             },
-            "ResultPath":"$.result",
+            "OutputPath":"$.Item",
             "Next": "Age Exist or not"
         },
         "Age Exist or not":{
             "Type": "Choice",
             "Choices" : [
                 {
-                    "Variable": "$.result.Item.age",
+                    "Variable": "$.age",
                     "IsPresent": false,
                     "Next": "Default Age" 
                 }
@@ -35,13 +35,10 @@
         "Default Age":{
             "Type": "Pass",
             "Parameters": {
-                "result": {
-                    "Item":{
-                        "age": {
-                            "N" : "20"
-                        }
-                    }
+                "age": {
+                    "N" : "20"
                 }
+  
             },
             "Next" : "Sum Ten to Age"
         },
@@ -49,7 +46,7 @@
             "Type": "Task",
             "Resource" : "${PlusTenFunctionArn}",
             "Parameters": {
-                "Age.$": "$.result.Item.age"
+                "age.$": "$.age"
             },
             "ResultPath" : "$.result2",
             "Next": "Add Plus Ten Age"
