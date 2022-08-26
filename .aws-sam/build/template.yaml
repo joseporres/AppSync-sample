@@ -26,6 +26,7 @@ Resources:
             - states:StartSyncExecution
             Resource:
             - Ref: PlusTenStateMachine
+            - Ref: StoreSettingsStateMachine
           - Effect: Allow
             Action:
             - dynamodb:GetItem
@@ -43,6 +44,15 @@ Resources:
               - Table:
                   Fn::GetAtt:
                   - DynamoStudentsTable
+                  - Arn
+            - Fn::GetAtt:
+              - DynamoSettingTable
+              - Arn
+            - Fn::Sub:
+              - ${Table}/index/*
+              - Table:
+                  Fn::GetAtt:
+                  - DynamoSettingTable
                   - Arn
   AppSyncApi:
     DependsOn: AppSyncServiceRole
@@ -280,12 +290,98 @@ Resources:
           FunctionName:
             Ref: PlusTenFunction
       - CloudWatchLogsFullAccess
+  AppSyncDynamoSettingsTableDataSource:
+    Type: AWS::AppSync::DataSource
+    Properties:
+      Name: SettingsTableDataSource
+      ApiId:
+        Fn::GetAtt:
+        - AppSyncApi
+        - ApiId
+      Description: Settings table data source
+      Type: AMAZON_DYNAMODB
+      ServiceRoleArn:
+        Fn::GetAtt:
+        - AppSyncServiceRole
+        - Arn
+      DynamoDBConfig:
+        TableName:
+          Ref: DynamoSettingTable
+        AwsRegion:
+          Fn::Sub: ${AWS::Region}
+  StoreSettingsResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn: AppSyncSchema
+    Properties:
+      ApiId:
+        Fn::GetAtt:
+        - AppSyncApi
+        - ApiId
+      TypeName: Mutation
+      FieldName: storeSettingsOB
+      DataSourceName:
+        Fn::GetAtt:
+        - StepFunctionsHttpDataSource
+        - Name
+      RequestMappingTemplate:
+        Fn::Sub: "{\n  \"version\": \"2018-05-29\",\n  \"method\": \"POST\",\n  \"\
+          resourcePath\": \"/\",\n  \"params\": {\n    \"headers\": {\n      \"content-type\"\
+          : \"application/x-amz-json-1.0\",\n      \"x-amz-target\":\"AWSStepFunctions.StartSyncExecution\"\
+          \n    },\n    \"body\": {\n      \"stateMachineArn\": \"${StoreSettingsStateMachine}\"\
+          ,\n      \"input\": \"{\\\"settings\\\": $util.escapeJavaScript($util.toJson($ctx.args.settings))}\"\
+          \n    }\n  }\n}\n"
+      ResponseMappingTemplate: $ctx.result.body
+  StoreSettingsStateMachine:
+    Type: AWS::Serverless::StateMachine
+    Properties:
+      DefinitionUri: ../../statemachines/storeSettings.asl.json
+      Type: EXPRESS
+      DefinitionSubstitutions:
+        DDBPutItem:
+          Fn::Sub: arn:${AWS::Partition}:states:::dynamodb:putItem
+        TableName:
+          Ref: DynamoSettingTable
+      Logging:
+        Destinations:
+        - CloudWatchLogsLogGroup:
+            LogGroupArn:
+              Fn::GetAtt:
+              - StoreSettingsLogs
+              - Arn
+        IncludeExecutionData: true
+        Level: ALL
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName:
+            Ref: DynamoSettingTable
+      - CloudWatchLogsFullAccess
   PlusTenLogs:
     Type: AWS::Logs::LogGroup
     Properties:
       LogGroupName:
         Fn::Sub: /aws/vendedlogs/states/${AWS::StackName}/PlusTen
       RetentionInDays: 3
+  StoreSettingsLogs:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName:
+        Fn::Sub: /aws/vendedlogs/states/${AWS::StackName}/storeSettings
+      RetentionInDays: 3
+  DynamoSettingTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: SettingsTable
+      AttributeDefinitions:
+      - AttributeName: id
+        AttributeType: S
+      - AttributeName: sort
+        AttributeType: S
+      KeySchema:
+      - AttributeName: id
+        KeyType: HASH
+      - AttributeName: sort
+        KeyType: RANGE
+      BillingMode: PAY_PER_REQUEST
   DynamoStudentsTable:
     Type: AWS::DynamoDB::Table
     Properties:
