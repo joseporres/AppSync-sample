@@ -1,6 +1,4 @@
 make all --print-data-base --no-builtin-variables --no-builtin-rules --question
-make: *** No rule to make target 'all'.  Stop.
-
 # GNU Make 4.3
 # Built for x86_64-pc-linux-gnu
 # Copyright (C) 1988-2020 Free Software Foundation, Inc.
@@ -8,7 +6,7 @@ make: *** No rule to make target 'all'.  Stop.
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
 
-# Make data base, printed on Fri Aug 26 12:02:09 2022
+# Make data base, printed on Sat Aug 27 11:25:46 2022
 
 # Variables
 
@@ -75,7 +73,7 @@ XAUTHORITY = /run/user/1000/gdm/Xauthority
 # default
 .INCLUDE_DIRS = /usr/local/include /usr/include /usr/include
 # environment
-GNOME_TERMINAL_SERVICE = :1.158
+GNOME_TERMINAL_SERVICE = :1.117
 # makefile
 MAKEFLAGS = pqrR
 # makefile
@@ -105,13 +103,13 @@ SNAP_REEXEC =
 # environment
 ZSH = /home/josedevmente/.oh-my-zsh
 # environment
-VSCODE_PID = 7058
+VSCODE_PID = 4730
 # environment
 XDG_SESSION_TYPE = x11
 # automatic
 ?D = $(patsubst %/,%,$(dir $?))
 # environment
-SESSION_MANAGER = local/joseDevmente:@/tmp/.ICE-unix/1296,unix/joseDevmente:/tmp/.ICE-unix/1296
+SESSION_MANAGER = local/joseDevmente:@/tmp/.ICE-unix/1288,unix/joseDevmente:/tmp/.ICE-unix/1288
 # automatic
 *F = $(notdir $*)
 # environment
@@ -135,7 +133,7 @@ XMODIFIERS = @im=ibus
 # environment
 SHLVL = 1
 # environment
-GNOME_TERMINAL_SCREEN = /org/gnome/Terminal/screen/0de70109_2627_4341_885d_f4f3401904d2
+GNOME_TERMINAL_SCREEN = /org/gnome/Terminal/screen/03fc9462_45cb_486f_92b1_58713939f539
 # environment
 MAKELEVEL := 0
 # default
@@ -187,7 +185,7 @@ SNAP_ARCH = amd64
 # makefile
 .DEFAULT_GOAL := build-PlusTenFunction
 # environment
-SYSTEMD_EXEC_PID = 1316
+SYSTEMD_EXEC_PID = 1308
 # environment
 DISPLAY = :0
 # environment
@@ -277,9 +275,12 @@ SNAP_LIBRARY_PATH = /var/lib/snapd/lib/gl:/var/lib/snapd/lib/gl32:/var/lib/snapd
 
 # Directories
 
-# . (device 66306, inode 14157244): 13 files, no impossibilities.
+# . (device 66306, inode 14157244): 14 files, no impossibilities.
 
-# 13 files, no impossibilities in 1 directories.
+ 
+make: *** No rule to make target 'all'.  Stop.
+
+# 14 files, no impossibilities in 1 directories.
 
 # Implicit Rules
 
@@ -287,21 +288,34 @@ SNAP_LIBRARY_PATH = /var/lib/snapd/lib/gl:/var/lib/snapd/lib/gl32:/var/lib/snapd
 
 # Files
 
+build-GetInvitationTemplateFunction:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (from 'Makefile', line 7):
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o $(ARTIFACTS_DIR)/handler functions/get-invitation-template.go/main.go
+
 build-PlusTenFunction:
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
 #  recipe to execute (from 'Makefile', line 4):
 	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o $(ARTIFACTS_DIR)/handler functions/PlusTen.go
-	
 
 # Not a target:
 Makefile:
 #  Implicit rule search has been done.
- 
-#  Last modified 2022-08-23 12:31:54.519935004
+#  Last modified 2022-08-26 22:31:41.769654905
 #  File has been updated.
 #  Successfully updated.
+
+build-SendInvitationFunction:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (from 'Makefile', line 10):
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o $(ARTIFACTS_DIR)/handler functions/send-invitation.go/main.go
+	
 
 # Not a target:
 .DEFAULT:
@@ -328,19 +342,19 @@ build:
 #  File has not been updated.
 
 # files hash-table stats:
-# Load=7/1024=1%, Rehash=0, Collisions=0/18=0%
+# Load=9/1024=1%, Rehash=0, Collisions=0/20=0%
 # VPATH Search Paths
 
 # No 'vpath' search paths.
 
 # No general ('VPATH' variable) search path.
 
-# strcache buffers: 1 (0) / strings = 21 / storage = 208 B / avg = 9 B
-# current buf: size = 8162 B / used = 208 B / count = 21 / avg = 9 B
+# strcache buffers: 1 (0) / strings = 24 / storage = 288 B / avg = 12 B
+# current buf: size = 8162 B / used = 288 B / count = 24 / avg = 12 B
 
-# strcache performance: lookups = 27 / hit rate = 22%
+# strcache performance: lookups = 32 / hit rate = 25%
 # hash-table stats:
-# Load=21/8192=0%, Rehash=0, Collisions=0/27=0%
-# Finished Make data base on Fri Aug 26 12:02:09 2022
+# Load=24/8192=0%, Rehash=0, Collisions=0/32=0%
+# Finished Make data base on Sat Aug 27 11:25:46 2022
 
  

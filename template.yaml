@@ -355,6 +355,8 @@ Resources:
       Type: EXPRESS
       DefinitionSubstitutions:
         DDBPutItem: !Sub arn:${AWS::Partition}:states:::dynamodb:putItem
+        GetInvitationTemplateFunctionArn : !GetAtt GetInvitationTemplateFunction.Arn
+        SendInvitationFunctionArn : !GetAtt SendInvitationFunction.Arn
         TableName: !Ref DynamoSettingTable
       Logging:
         Destinations:
@@ -364,9 +366,27 @@ Resources:
         Level: ALL  
       Policies: 
         - DynamoDBCrudPolicy:
-            TableName: !Ref DynamoSettingTable 
+            TableName: !Ref DynamoSettingTable
+        - LambdaInvokePolicy:
+            FunctionName: !Ref PutSettingsFunction
+        - Lambda 
         - CloudWatchLogsFullAccess
-
+  
+  GetInvitationTemplateFunction:
+    Type: 'AWS::Serverless::Function'
+    Metadata:
+      BuildMethod: makefile
+    Properties:
+      Handler: handler
+      Runtime: go1.x
+      
+  SendInvitationFunction:
+    Type: 'AWS::Serverless::Function'
+    Metadata:
+      BuildMethod: makefile
+    Properties:
+      Handler: handler
+      Runtime: go1.x
 
   ###############      
   ## LOGS      ##

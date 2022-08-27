@@ -1,133 +1,23 @@
 {
     "Comment": "Register User",
-    "StartAt": "CreateItem",
+    "StartAt": "Get Invitation Template",
     "States": {
-        "CreateItem": {
-            "Type": "Pass",
-            "Parameters": {
-                "data":{
-                    "id": {
-                        "S.$": "$$.Execution.Input.settings.email"
-                    },
-                    "sort":{
-                        "S": "SETTINGS"
-                    },
-                    "name": {
-                      "S.$": "$$.Execution.Input.settings.name"
-                      },
-                    "docType": {
-                      "S.$": "$$.Execution.Input.settings.docType"
-                      },
-                    "dni": {
-                      "S.$": "$$.Execution.Input.settings.dni"
-                      },
-                    "gender": {
-                      "S.$": "$$.Execution.Input.settings.gender"
-                      },
-                    "birthDate": {
-                      "S.$": "$$.Execution.Input.settings.birthDate"
-                      },
-                    "countryBirth": {
-                      "S.$": "$$.Execution.Input.settings.countryBirth"
-                      },
-                    "emailPersonal": {
-                      "S.$": "$$.Execution.Input.settings.emailPersonal"
-                      },
-                    "civilState": {
-                      "S.$": "$$.Execution.Input.settings.civilState"
-                      },
-                    "phonePersonal": {
-                      "S.$": "$$.Execution.Input.settings.phonePersonal"
-                      },
-                    "countryResidence": {
-                      "S.$": "$$.Execution.Input.settings.countryResidence"
-                      },
-                    "departmentResidence": {
-                      "S.$": "$$.Execution.Input.settings.departmentResidence"
-                      },
-                    "address": {
-                      "S.$": "$$.Execution.Input.settings.address"
-                      },
-                    "area": {
-                      "S.$": "$$.Execution.Input.settings.area"
-                      },
-                    "subArea": {
-                      "S.$": "$$.Execution.Input.settings.subArea"
-                      },
-                    "jobTittle": {
-                      "S.$": "$$.Execution.Input.settings.jobTittle"
-                      },
-                    "email": {
-                      "S.$": "$$.Execution.Input.settings.email"
-                      },
-                    "entryDate": {
-                      "S.$": "$$.Execution.Input.settings.entryDate"
-                      },
-                    "lastSessionDate": {
-                      "S.$": "$$.Execution.Input.settings.lastSessionDate"
-                      },
-                    "phone": {
-                      "S.$": "$$.Execution.Input.settings.phone"
-                      },
-                    "apps": {
-                      "S.$": "$$.Execution.Input.settings.apps"
-                      },
-                    "menu": {
-                      "S.$": "$$.Execution.Input.settings.menu"
-                      },
-                    "processes": {
-                      "S.$": "$$.Execution.Input.settings.processes"
-                      },
-                    "userType": {
-                      "S.$": "$$.Execution.Input.settings.userType"
-                      },
-                    "userState": {
-                      "S.$": "$$.Execution.Input.settings.userState"
-                      },
-                    "role": {
-                      "S.$": "$$.Execution.Input.settings.role"
-                      },
-                    "days": {
-                        
-                      "N.$": "States.Format('{}',$$.Execution.Input.settings.days)"
-                      },
-                    "homeOffice": {
-                      "N.$": "$$.Execution.Input.settings.homeOffice"
-                      },
-                    "photo": {
-                      "S.$": "$$.Execution.Input.settings.photo"
-                      },
-                    "boss": {
-                      "S.$": "$$.Execution.Input.settings.boss"
-                      },
-                    "bossName": {
-                      "S.$": "$$.Execution.Input.settings.bossName"
-                      },
-                    "user": {
-                      "S.$": "$$.Execution.Input.settings.user"
-                      }
-                }
-
-            },
-            "Next": "Add Pending User"
-        },
-        "Add Pending User": {
+        "Get Invitation Template":{
             "Type": "Task",
-            "Resource": "${DDBPutItem}",
-            "Parameters": {
-                "TableName": "${TableName}",
-                "Item.$": "$.data"
-                                  
-            },
-            "Next": "End Step Function"
+            "Resource": "${GetInvitationTemplateFunctionArn}",
+            "ResultPath": "$.emailTemplate",
+            "Next": "Send Email"
         },
-        "End Step Function" : {
-            "Type": "Pass",
+
+        "Send Email":{
+            "Type": "Task",
+            "Resource": "${SendEmailFunctionArn}",
             "Parameters": {
-                "respuesta": "SI"
+                "email.$": "$$.Execution.Input.email",
+                "name.$": "$$.Execution.Input.name",
+                "emailTemplate.$": "$.emailTemplate"
             },
-            "OutputPath": "$",
-            "End": true  
+            "End": true
         }
         
     }
