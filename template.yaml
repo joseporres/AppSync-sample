@@ -28,7 +28,7 @@ Resources:
                 Action:
                   - states:StartSyncExecution
                 Resource:
-                  - !Ref CreateSettingsMachine
+                  - !Ref StoreSettingsStateMachine
               - Effect: Allow
                 Action:
                   - dynamodb:GetItem
@@ -100,7 +100,7 @@ Resources:
         TableName: !Ref DynamoSettingTableSample
         AwsRegion: !Sub ${AWS::Region}
 
-  CreateSettings:         
+  StoreSettingsFunction:         
     Type: 'AWS::Serverless::Function'
     Metadata:
       BuildMethod: makefile
@@ -114,13 +114,13 @@ Resources:
         Variables:
           SETTINGS_TABLE: !Ref DynamoSettingTableSample
 
-  CreateSettingsResolver:
+  StoreSettingsResolver:
     Type: AWS::AppSync::Resolver
     DependsOn: AppSyncSchema
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
       TypeName: Mutation
-      FieldName: storeSettingsOB
+      FieldName: storeSettings
       DataSourceName: !GetAtt StepFunctionsHttpDataSource.Name
       RequestMappingTemplate: !Sub >
         {
@@ -133,20 +133,20 @@ Resources:
               "x-amz-target":"AWSStepFunctions.StartSyncExecution"
             },
             "body": {
-              "stateMachineArn": "${CreateSettingsMachine}",
+              "stateMachineArn": "${StoreSettingsStateMachine}",
               "input": "{ \"settings\": $util.escapeJavaScript($util.toJson($ctx.args.settings))}"
             }
           }
         }
       ResponseMappingTemplate: $ctx.result.body
     
-  CreateSettingsMachine:
+  StoreSettingsStateMachine:
     Type: AWS::Serverless::StateMachine
     Properties:
       DefinitionUri: statemachines/storeSettings.asl.json
       Type: EXPRESS
       DefinitionSubstitutions:
-        CreateSettingsArn : !GetAtt CreateSettings.Arn 
+        StoreSettingsFunctionArn : !GetAtt StoreSettingsFunction.Arn 
         TableName: !Ref DynamoSettingTableSample
       Logging:
         Destinations:
@@ -158,7 +158,7 @@ Resources:
         - DynamoDBCrudPolicy:
             TableName: !Ref DynamoSettingTableSample 
         - LambdaInvokePolicy:
-            FunctionName: !Ref CreateSettings
+            FunctionName: !Ref StoreSettingsFunction
         - CloudWatchLogsFullAccess
     
 

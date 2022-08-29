@@ -1,20 +1,12 @@
 {
     "Comment": "Register User",
-    "StartAt": "Create Setting",
+    "StartAt": "Create User",
     "States": {
-        "Create Setting": {
+        "Create User": {
             "Type": "Task",
-            "Resource": "${CreateSettingsArn}",
-            "ResultPath": "$.setting",
-            "Next": "END CREATE"
-        },
-        "END CREATE": {
-            "Type": "Pass", 
-            "Parameters": {
-                "setting": "$.setting"
-            },
+            "Resource": "${StoreSettingsFunctionArn}",
+            "OutputPath": "$",
             "End": true
         }
-        
     }
 }

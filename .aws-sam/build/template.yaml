@@ -25,7 +25,7 @@ Resources:
             Action:
             - states:StartSyncExecution
             Resource:
-            - Ref: CreateSettingsMachine
+            - Ref: StoreSettingsStateMachine
           - Effect: Allow
             Action:
             - dynamodb:GetItem
@@ -108,11 +108,11 @@ Resources:
           Ref: DynamoSettingTableSample
         AwsRegion:
           Fn::Sub: ${AWS::Region}
-  CreateSettings:
+  StoreSettingsFunction:
     Type: AWS::Serverless::Function
     Metadata:
       BuildMethod: makefile
-      SamResourceId: CreateSettings
+      SamResourceId: StoreSettingsFunction
     Properties:
       Handler: handler
       Runtime: go1.x
@@ -124,8 +124,8 @@ Resources:
         Variables:
           SETTINGS_TABLE:
             Ref: DynamoSettingTableSample
-      CodeUri: CreateSettings
-  CreateSettingsResolver:
+      CodeUri: StoreSettingsFunction
+  StoreSettingsResolver:
     Type: AWS::AppSync::Resolver
     DependsOn: AppSyncSchema
     Properties:
@@ -134,7 +134,7 @@ Resources:
         - AppSyncApi
         - ApiId
       TypeName: Mutation
-      FieldName: storeSettingsOB
+      FieldName: storeSettings
       DataSourceName:
         Fn::GetAtt:
         - StepFunctionsHttpDataSource
@@ -143,19 +143,19 @@ Resources:
         Fn::Sub: "{\n  \"version\": \"2018-05-29\",\n  \"method\": \"POST\",\n  \"\
           resourcePath\": \"/\",\n  \"params\": {\n    \"headers\": {\n      \"content-type\"\
           : \"application/x-amz-json-1.0\",\n      \"x-amz-target\":\"AWSStepFunctions.StartSyncExecution\"\
-          \n    },\n    \"body\": {\n      \"stateMachineArn\": \"${CreateSettingsMachine}\"\
+          \n    },\n    \"body\": {\n      \"stateMachineArn\": \"${StoreSettingsStateMachine}\"\
           ,\n      \"input\": \"{ \\\"settings\\\": $util.escapeJavaScript($util.toJson($ctx.args.settings))}\"\
           \n    }\n  }\n}\n"
       ResponseMappingTemplate: $ctx.result.body
-  CreateSettingsMachine:
+  StoreSettingsStateMachine:
     Type: AWS::Serverless::StateMachine
     Properties:
       DefinitionUri: ../../statemachines/storeSettings.asl.json
       Type: EXPRESS
       DefinitionSubstitutions:
-        CreateSettingsArn:
+        StoreSettingsFunctionArn:
           Fn::GetAtt:
-          - CreateSettings
+          - StoreSettingsFunction
           - Arn
         TableName:
           Ref: DynamoSettingTableSample
@@ -174,7 +174,7 @@ Resources:
             Ref: DynamoSettingTableSample
       - LambdaInvokePolicy:
           FunctionName:
-            Ref: CreateSettings
+            Ref: StoreSettingsFunction
       - CloudWatchLogsFullAccess
   CreateSettingsLogs:
     Type: AWS::Logs::LogGroup

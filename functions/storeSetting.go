@@ -20,7 +20,7 @@ type Option struct {
 	Active bool `json:"active"`
 }
 
-type SettingsObj struct {
+type UserObject struct {
     Name string `json:"name"`
     DocType string `json:"docType"`
     Dni string `json:"dni"`
@@ -54,7 +54,7 @@ type SettingsObj struct {
     User string `json:"user"`
 }
 
-type StoreInput struct {
+type UserInput struct {
 	Id string `json:"id"`
 	Sort string `json:"sort"`
     Name string `json:"name"`
@@ -91,7 +91,7 @@ type StoreInput struct {
 }
 
 type Event struct{
-	Settings SettingsObj `json:"settings"`
+	Settings UserObject `json:"settings"`
 }
 
 
@@ -107,7 +107,7 @@ func handler(ctx context.Context, event Event) (string, error) {
 	}
 
 	svc := dynamodb.New(sess)
-	in := StoreInput{ 
+	in := UserInput{ 
 		Id: event.Settings.Email,
 		Sort: "SETTINGS",
 		Name: event.Settings.Name,
