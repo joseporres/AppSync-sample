@@ -2,14 +2,6 @@
 #
 # https://gqlgen.com/getting-started/
 
-type Student{
-    id: String!
-    sk: String!
-    name: String
-    age: Int
-    agePlus: Int
-}
-
 type Execution{
     output: String
 }
@@ -187,22 +179,12 @@ input SettingsOBInput {
     # user
     user: String
 }
-
-
-
-
-
-    
-
-type Query{
-    getStudents(id: String!): [Student],
-    getStudent(id: String!, sk: String!): Student,
+type Query {
+    # get settings
+    getSettings: SettingsOB
 }
+
 
 type Mutation{
     storeSettingsOB(settings: SettingsOBInput!): Execution, 
-    addPlus(id: String!, sk: String!): Execution,
-    createStudent(name: String!, id: String!, sk: String!): Student,
-    updateStudent(name: String!, id: String!, sk: String!): Student,
-    deleteStudent(id: String!, sk: String!): Student,
 }

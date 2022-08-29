@@ -1,21 +1,17 @@
 {
     "Comment": "Register User",
-    "StartAt": "Get Invitation Template",
+    "StartAt": "Create Setting",
     "States": {
-        "Get Invitation Template":{
+        "Create Setting": {
             "Type": "Task",
-            "Resource": "${GetInvitationTemplateFunctionArn}",
-            "ResultPath": "$.emailTemplate",
-            "Next": "Send Email"
+            "Resource": "${CreateSettingsArn}",
+            "ResultPath": "$.setting",
+            "Next": "END CREATE"
         },
-
-        "Send Email":{
-            "Type": "Task",
-            "Resource": "${SendEmailFunctionArn}",
+        "END CREATE": {
+            "Type": "Pass", 
             "Parameters": {
-                "email.$": "$$.Execution.Input.email",
-                "name.$": "$$.Execution.Input.name",
-                "emailTemplate.$": "$.emailTemplate"
+                "setting": "$.setting"
             },
             "End": true
         }

@@ -1,3 +1,18 @@
 {
-    "makefile.extensionOutputFolder": "./.vscode"
+    "makefile.extensionOutputFolder": "./.vscode",
+    "serverlessConsole.services": [
+        {
+            "type": "cloudformation",
+            "title": "prueba1",
+            "timeOffsetInMs": 0,
+            "awsProfile": "default",
+            "stacks": [
+                {
+                    "region": "us-east-1",
+                    "stackName": "createSetting",
+                    "stage": "dev"
+                }
+            ]
+        }
+    ]
 }

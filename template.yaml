@@ -28,8 +28,7 @@ Resources:
                 Action:
                   - states:StartSyncExecution
                 Resource:
-                  - !Ref PlusTenStateMachine
-                  - !Ref StoreSettingsStateMachine
+                  - !Ref CreateSettingsMachine
               - Effect: Allow
                 Action:
                   - dynamodb:GetItem
@@ -39,14 +38,10 @@ Resources:
                   - dynamodb:Query
                   - dynamodb:Scan
                 Resource: 
-                  - !GetAtt DynamoStudentsTable.Arn
+                  - !GetAtt DynamoSettingTableSample.Arn
                   - !Sub 
                     - "${Table}/index/*"
-                    - { Table: !GetAtt DynamoStudentsTable.Arn }
-                  - !GetAtt DynamoSettingTable.Arn
-                  - !Sub 
-                    - "${Table}/index/*"
-                    - { Table: !GetAtt DynamoSettingTable.Arn }
+                    - { Table: !GetAtt DynamoSettingTableSample.Arn }
               # - Effect: Allow
               #   Action:
               #   - lambda:invokeFunction
@@ -74,165 +69,6 @@ Resources:
       ApiId: !GetAtt AppSyncApi.ApiId
       DefinitionS3Location: "./schema.graphql"
 
- # AppSync Data Source for DynamoDB
-  AppSyncStudentsDataSource:
-    Type: AWS::AppSync::DataSource
-    Properties:
-      Name: SingleTableStudentDataSource
-      ApiId: !GetAtt AppSyncApi.ApiId
-      Description: "The Single Table AppSync Data Source"
-      Type: AMAZON_DYNAMODB
-      ServiceRoleArn: !GetAtt AppSyncServiceRole.Arn
-      DynamoDBConfig:
-        TableName: !Ref DynamoStudentsTable
-        AwsRegion: !Sub ${AWS::Region}
-
-  # AppSync get all students Resolver
-  AppSyncGetAllResolver:
-    Type: AWS::AppSync::Resolver
-    DependsOn: AppSyncSchema
-    Properties: 
-      ApiId: !GetAtt AppSyncApi.ApiId
-      TypeName: Query
-      FieldName: getStudents
-      DataSourceName: !GetAtt AppSyncStudentsDataSource.Name
-      RequestMappingTemplate: >
-        {
-          "version": "2018-05-29",
-          "operation": "Query",
-          "query": {
-              "expression": "id = :id", 
-              "expressionValues":	{              
-                ":id" : $util.dynamodb.toDynamoDBJson("ESTUDIANTE")
-              }
-            }
-        }
-      ResponseMappingTemplate: >
-        [
-          #foreach($item in $ctx.result.items)
-            {
-                "sk":$util.toJson($item['sk']),
-                "id": $util.toJson($item['id']),
-                "name": $util.toJson($item['name'])
-            }#if($foreach.hasNext),#end
-            #end
-        ]
-  # AppSync get student Resolver
-
-  AppSyncGetStudentResolver:
-    Type: AWS::AppSync::Resolver
-    DependsOn: AppSyncSchema
-    Properties: 
-      ApiId: !GetAtt AppSyncApi.ApiId
-      TypeName: Query
-      FieldName: getStudent
-      DataSourceName: !GetAtt AppSyncStudentsDataSource.Name
-      RequestMappingTemplate: >
-        {
-          "version": "2017-02-28",
-          "operation": "GetItem",
-          "key": {
-            "id": $util.dynamodb.toDynamoDBJson($ctx.args.id),
-            "sk": $util.dynamodb.toDynamoDBJson($ctx.args.sk)
-          }
-        }
-      ResponseMappingTemplate: >
-        {
-          "sk":$util.toJson($ctx.result.sk),
-          "id": $util.toJson($ctx.result.id),
-          "name": $util.toJson($ctx.result.name)
-        }
-
-  # AppSync create student Resolver
-
-  AppSyncCreateStudentResolver:
-    Type: AWS::AppSync::Resolver
-    DependsOn: AppSyncSchema
-    Properties: 
-      ApiId: !GetAtt AppSyncApi.ApiId
-      TypeName: Mutation
-      FieldName: createStudent
-      DataSourceName: !GetAtt AppSyncStudentsDataSource.Name
-      RequestMappingTemplate: >
-        {
-          "version": "2017-02-28",
-          "operation": "PutItem",
-          "key": {
-            "id": $util.dynamodb.toDynamoDBJson($context.args.id),
-            "sk": $util.dynamodb.toDynamoDBJson($context.args.sk)
-          },
-          "attributeValues": {
-            "name": $util.dynamodb.toDynamoDBJson($context.args.name)
-          }
-        }
-      ResponseMappingTemplate: >
-        {
-          "sk":$util.toJson($ctx.result.sk),
-          "id": $util.toJson($ctx.result.id),
-          "name": $util.toJson($ctx.result.name)
-        }
-  
-  # AppSync update student Resolver
-
-  AppSyncUpdateStudentResolver:
-    Type: AWS::AppSync::Resolver
-    DependsOn: AppSyncSchema
-    Properties: 
-      ApiId: !GetAtt AppSyncApi.ApiId
-      TypeName: Mutation
-      FieldName: updateStudent
-      DataSourceName: !GetAtt AppSyncStudentsDataSource.Name
-      RequestMappingTemplate: >
-        {
-          "version": "2017-02-28",
-          "operation": "UpdateItem",
-          "key": {
-            "id": $util.dynamodb.toDynamoDBJson($ctx.args.id),
-            "sk": $util.dynamodb.toDynamoDBJson($ctx.args.sk)
-          },
-          "update": {
-            "expression": "set #name = :name",
-            "expressionNames": {
-              "#name": "name"
-            },
-            "expressionValues": {
-             ":name": $util.dynamodb.toDynamoDBJson($ctx.args.name)
-            }
-          }
-        }
-      ResponseMappingTemplate: >
-        {
-          "sk":$util.toJson($ctx.result.sk),
-          "id": $util.toJson($ctx.result.id),
-          "name": $util.toJson($ctx.result.name)
-        }
-  
-  # AppSync delete student Resolver
-  AppSyncDeleteStudentResolver:
-    Type: AWS::AppSync::Resolver
-    DependsOn: AppSyncSchema
-    Properties: 
-      ApiId: !GetAtt AppSyncApi.ApiId
-      TypeName: Mutation
-      FieldName: deleteStudent
-      DataSourceName: !GetAtt AppSyncStudentsDataSource.Name
-      RequestMappingTemplate: >
-        {
-          "version": "2017-02-28",
-          "operation": "DeleteItem",
-          "key": {
-            "id": $util.dynamodb.toDynamoDBJson($ctx.args.id),
-            "sk": $util.dynamodb.toDynamoDBJson($ctx.args.sk)
-          }
-        }
-      ResponseMappingTemplate: >
-        {
-          "sk":$util.toJson($ctx.result.sk),
-          "id": $util.toJson($ctx.result.id),
-          "name": $util.toJson($ctx.result.name)
-        }
-
-
 
   # STEPFUNCTION PRACTICE
   StepFunctionsHttpDataSource:
@@ -251,64 +87,6 @@ Resources:
             SigningRegion: !Ref AWS::Region
             SigningServiceName: states
 
-  PlusTenFunction:         
-    Type: 'AWS::Serverless::Function'
-    Metadata:
-      BuildMethod: makefile
-    Properties:
-      Handler: handler
-      Runtime: go1.x
-
-  CreateStudentPlusResolver:
-    Type: AWS::AppSync::Resolver
-    DependsOn: AppSyncSchema
-    Properties:
-      ApiId: !GetAtt AppSyncApi.ApiId
-      TypeName: Mutation
-      FieldName: addPlus
-      DataSourceName: !GetAtt StepFunctionsHttpDataSource.Name
-      RequestMappingTemplate: !Sub >
-        {
-          "version": "2018-05-29",
-          "method": "POST",
-          "resourcePath": "/",
-          "params": {
-            "headers": {
-              "content-type": "application/x-amz-json-1.0",
-              "x-amz-target":"AWSStepFunctions.StartSyncExecution"
-            },
-            "body": {
-              "stateMachineArn": "${PlusTenStateMachine}",
-              "input": "{ \"id\": $util.escapeJavaScript($util.toJson($ctx.args.id)), \"sk\": $util.escapeJavaScript($util.toJson($ctx.args.sk))}"
-            }
-          }
-        }
-      ResponseMappingTemplate: $ctx.result.body
-    
-  PlusTenStateMachine:
-    Type: AWS::Serverless::StateMachine
-    Properties:
-      DefinitionUri: statemachines/plusten.asl.json
-      Type: EXPRESS
-      DefinitionSubstitutions:
-        DBGetStudent: !Sub arn:${AWS::Partition}:states:::dynamodb:getItem
-        DBUpdateStudent: !Sub arn:${AWS::Partition}:states:::dynamodb:updateItem
-        PlusTenFunctionArn : !GetAtt PlusTenFunction.Arn 
-        TableName: !Ref DynamoStudentsTable
-      Logging:
-        Destinations:
-          - CloudWatchLogsLogGroup:
-              LogGroupArn: !GetAtt PlusTenLogs.Arn
-        IncludeExecutionData: true
-        Level: ALL  
-      Policies: 
-        - DynamoDBCrudPolicy:
-            TableName: !Ref DynamoStudentsTable 
-        - LambdaInvokePolicy:
-            FunctionName: !Ref PlusTenFunction
-        - CloudWatchLogsFullAccess
-    
-
    # AppSync Data Source for DynamoDB Settings
   AppSyncDynamoSettingsTableDataSource:
     Type: AWS::AppSync::DataSource
@@ -319,10 +97,24 @@ Resources:
       Type: AMAZON_DYNAMODB
       ServiceRoleArn: !GetAtt AppSyncServiceRole.Arn
       DynamoDBConfig:
-        TableName: !Ref DynamoSettingTable
+        TableName: !Ref DynamoSettingTableSample
         AwsRegion: !Sub ${AWS::Region}
 
-  StoreSettingsResolver:
+  CreateSettings:         
+    Type: 'AWS::Serverless::Function'
+    Metadata:
+      BuildMethod: makefile
+    Properties:
+      Handler: handler
+      Runtime: go1.x
+      Policies: 
+          - DynamoDBCrudPolicy:
+              TableName: !Ref DynamoSettingTableSample
+      Environment:
+        Variables:
+          SETTINGS_TABLE: !Ref DynamoSettingTableSample
+
+  CreateSettingsResolver:
     Type: AWS::AppSync::Resolver
     DependsOn: AppSyncSchema
     Properties:
@@ -341,74 +133,54 @@ Resources:
               "x-amz-target":"AWSStepFunctions.StartSyncExecution"
             },
             "body": {
-              "stateMachineArn": "${StoreSettingsStateMachine}",
-              "input": "{\"settings\": $util.escapeJavaScript($util.toJson($ctx.args.settings))}"
+              "stateMachineArn": "${CreateSettingsMachine}",
+              "input": "{ \"settings\": $util.escapeJavaScript($util.toJson($ctx.args.settings))}"
             }
           }
         }
       ResponseMappingTemplate: $ctx.result.body
-
-  StoreSettingsStateMachine:
+    
+  CreateSettingsMachine:
     Type: AWS::Serverless::StateMachine
     Properties:
       DefinitionUri: statemachines/storeSettings.asl.json
       Type: EXPRESS
       DefinitionSubstitutions:
-        DDBPutItem: !Sub arn:${AWS::Partition}:states:::dynamodb:putItem
-        GetInvitationTemplateFunctionArn : !GetAtt GetInvitationTemplateFunction.Arn
-        SendInvitationFunctionArn : !GetAtt SendInvitationFunction.Arn
-        TableName: !Ref DynamoSettingTable
+        CreateSettingsArn : !GetAtt CreateSettings.Arn 
+        TableName: !Ref DynamoSettingTableSample
       Logging:
         Destinations:
           - CloudWatchLogsLogGroup:
-              LogGroupArn: !GetAtt StoreSettingsLogs.Arn
+              LogGroupArn: !GetAtt CreateSettingsLogs.Arn
         IncludeExecutionData: true
         Level: ALL  
       Policies: 
         - DynamoDBCrudPolicy:
-            TableName: !Ref DynamoSettingTable
+            TableName: !Ref DynamoSettingTableSample 
         - LambdaInvokePolicy:
-            FunctionName: !Ref PutSettingsFunction
-        - Lambda 
+            FunctionName: !Ref CreateSettings
         - CloudWatchLogsFullAccess
-  
-  GetInvitationTemplateFunction:
-    Type: 'AWS::Serverless::Function'
-    Metadata:
-      BuildMethod: makefile
-    Properties:
-      Handler: handler
-      Runtime: go1.x
-      
-  SendInvitationFunction:
-    Type: 'AWS::Serverless::Function'
-    Metadata:
-      BuildMethod: makefile
-    Properties:
-      Handler: handler
-      Runtime: go1.x
+    
+
+
 
   ###############      
   ## LOGS      ##
   ###############  
-
-  PlusTenLogs:
-    Type: AWS::Logs::LogGroup
-    Properties:
-      LogGroupName: !Sub /aws/vendedlogs/states/${AWS::StackName}/PlusTen
-      RetentionInDays: 3 
   
-  StoreSettingsLogs:
+  CreateSettingsLogs:
     Type: AWS::Logs::LogGroup
     Properties:
-      LogGroupName: !Sub /aws/vendedlogs/states/${AWS::StackName}/storeSettings
+      LogGroupName: !Sub /aws/vendedlogs/states/${AWS::StackName}/createSettings
       RetentionInDays: 3 
 
- # DynamoDB
-  DynamoSettingTable:
+  ###############      
+  ## DYNAMO DB ##
+  ###############  
+  DynamoSettingTableSample:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: SettingsTable
+      TableName: SettingsTableSample
       AttributeDefinitions:
         - AttributeName: id
           AttributeType: S
@@ -418,23 +190,6 @@ Resources:
         - AttributeName: id
           KeyType: HASH
         - AttributeName: sort
-          KeyType: RANGE
-      BillingMode: PAY_PER_REQUEST
-
-  # DynamoDB
-  DynamoStudentsTable:
-    Type: AWS::DynamoDB::Table
-    Properties:
-      TableName: StudentsTable
-      AttributeDefinitions:
-        - AttributeName: id
-          AttributeType: S
-        - AttributeName: sk
-          AttributeType: S        
-      KeySchema:
-        - AttributeName: id
-          KeyType: HASH
-        - AttributeName: sk
           KeyType: RANGE
       BillingMode: PAY_PER_REQUEST
 
