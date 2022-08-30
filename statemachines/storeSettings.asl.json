@@ -5,6 +5,26 @@
         "Create User": {
             "Type": "Task",
             "Resource": "${StoreSettingsFunctionArn}",
+            "ResultPath": "$.Created",
+            "Next": "Get Email Template"
+        },
+        "Get Email Template": {
+            "Type": "Task",
+            "Resource": "${GetInvitationTemplateFunctionArn}",
+            "Parameters": {
+                "userType.$": "$$.Execution.Input.settings.userType"
+            },
+            "ResultPath": "$.template",
+            "Next": "Send Email"
+        },
+        "Send Email": {
+            "Type": "Task",
+            "Resource": "${SendInvitationFunctionArn}",
+            "Parameters": {
+                "email.$": "$$.Execution.Input.settings.email",
+                "name.$": "$$.Execution.Input.settings.name",
+                "HTMLBody.$": "$.template"
+            },
             "OutputPath": "$",
             "End": true
         }

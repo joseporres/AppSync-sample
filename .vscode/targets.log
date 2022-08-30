@@ -1,4 +1,6 @@
 make all --print-data-base --no-builtin-variables --no-builtin-rules --question
+make: *** No rule to make target 'all'.  Stop.
+
 # GNU Make 4.3
 # Built for x86_64-pc-linux-gnu
 # Copyright (C) 1988-2020 Free Software Foundation, Inc.
@@ -6,7 +8,7 @@ make all --print-data-base --no-builtin-variables --no-builtin-rules --question
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
 
-# Make data base, printed on Sat Aug 27 11:25:46 2022
+# Make data base, printed on Mon Aug 29 21:56:02 2022
 
 # Variables
 
@@ -15,11 +17,15 @@ GDK_BACKEND = x11
 # environment
 LC_ALL = C
 # environment
+NO_AT_BRIDGE = 1
+# environment
 GNOME_SHELL_SESSION_MODE = ubuntu
 # environment
 SSH_AGENT_LAUNCHER = gnome-keyring
 # environment
 SNAP_INSTANCE_KEY = 
+# environment
+GJS_DEBUG_OUTPUT = stderr
 # environment
 MANDATORY_PATH = /usr/share/gconf/ubuntu.mandatory.path
 # environment
@@ -73,13 +79,13 @@ XAUTHORITY = /run/user/1000/gdm/Xauthority
 # default
 .INCLUDE_DIRS = /usr/local/include /usr/include /usr/include
 # environment
-GNOME_TERMINAL_SERVICE = :1.117
+GNOME_TERMINAL_SERVICE = :1.121
 # makefile
 MAKEFLAGS = pqrR
 # makefile
 CURDIR := /home/josedevmente/Documents/aws_sam/appsync/AppSync-sample
 # environment
-APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL = true
+APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL = 1
 # automatic
 *D = $(patsubst %/,%,$(dir $*))
 # environment
@@ -103,13 +109,15 @@ SNAP_REEXEC =
 # environment
 ZSH = /home/josedevmente/.oh-my-zsh
 # environment
-VSCODE_PID = 4730
+VSCODE_PID = 3883
 # environment
 XDG_SESSION_TYPE = x11
 # automatic
 ?D = $(patsubst %/,%,$(dir $?))
 # environment
-SESSION_MANAGER = local/joseDevmente:@/tmp/.ICE-unix/1288,unix/joseDevmente:/tmp/.ICE-unix/1288
+BAMF_DESKTOP_FILE_HINT = /var/lib/snapd/desktop/applications/code_code.desktop
+# environment
+SESSION_MANAGER = local/joseDevmente:@/tmp/.ICE-unix/1292,unix/joseDevmente:/tmp/.ICE-unix/1292
 # automatic
 *F = $(notdir $*)
 # environment
@@ -131,9 +139,11 @@ MAKECMDGOALS := all
 # environment
 XMODIFIERS = @im=ibus
 # environment
+GJS_DEBUG_TOPICS = JS ERROR;JS LOG
+# environment
 SHLVL = 1
 # environment
-GNOME_TERMINAL_SCREEN = /org/gnome/Terminal/screen/03fc9462_45cb_486f_92b1_58713939f539
+GNOME_TERMINAL_SCREEN = /org/gnome/Terminal/screen/5ba90b98_3afd_4660_8283_8957e9289504
 # environment
 MAKELEVEL := 0
 # default
@@ -154,6 +164,8 @@ SNAP_USER_COMMON = /home/josedevmente/snap/code/common
 LC_TIME = agr_PE
 # environment
 SNAP = /snap/code/105
+# environment
+INVOCATION_ID = b49ecf3ab7bd43be826e976c0e45f04e
 # environment
 SNAP_REVISION = 105
 # environment
@@ -181,11 +193,13 @@ GNUMAKEFLAGS :=
 # environment
 LOGNAME = josedevmente
 # environment
+GIO_LAUNCHED_DESKTOP_FILE = /var/lib/snapd/desktop/applications/code_code.desktop
+# environment
 SNAP_ARCH = amd64
 # makefile
-.DEFAULT_GOAL := build-PlusTenFunction
+.DEFAULT_GOAL := build-StoreSettingsFunction
 # environment
-SYSTEMD_EXEC_PID = 1308
+SYSTEMD_EXEC_PID = 1312
 # environment
 DISPLAY = :0
 # environment
@@ -203,7 +217,11 @@ SNAP_DATA = /var/snap/code/105
 # environment
 SNAP_CONTEXT = El7ilc_S_C45ohgYyla2ojI97CDABdMzTTY0r62ohH2rZPx0iKnD
 # environment
+MANAGERPID = 933
+# environment
 LC_MEASUREMENT = agr_PE
+# environment
+GIO_LAUNCHED_DESKTOP_FILE_PID = 3834
 # environment
 PAGER = less
 # environment
@@ -216,6 +234,8 @@ GPG_AGENT_INFO = /run/user/1000/gnupg/S.gpg-agent:0:1
 COLORTERM = truecolor
 # environment
 GDK_PIXBUF_MODULE_FILE = /home/josedevmente/snap/code/common/.cache/gdk-pixbuf-loaders.cache
+# environment
+JOURNAL_STREAM = 8:32944
 # environment
 GOMODCACHE = /home/josedevmente/go/pkg/mod
 # environment
@@ -258,6 +278,7 @@ SNAP_COMMON = /var/snap/code/common
 .FEATURES := target-specific order-only second-expansion else-if shortest-stem undefine oneshell nocomment grouped-target extra-prereqs archives jobserver output-sync check-symlink load
 # environment
 SNAP_USER_DATA = /home/josedevmente/snap/code/105
+ 
 # environment
 XDG_MENU_PREFIX = gnome-
 # environment
@@ -267,7 +288,7 @@ LC_IDENTIFICATION = agr_PE
 # environment
 SNAP_LIBRARY_PATH = /var/lib/snapd/lib/gl:/var/lib/snapd/lib/gl32:/var/lib/snapd/void
 # variable set hash-table stats:
-# Load=128/1024=12%, Rehash=0, Collisions=12/158=8%
+# Load=137/1024=13%, Rehash=0, Collisions=13/167=8%
 
 # Pattern-specific Variable Values
 
@@ -276,9 +297,6 @@ SNAP_LIBRARY_PATH = /var/lib/snapd/lib/gl:/var/lib/snapd/lib/gl32:/var/lib/snapd
 # Directories
 
 # . (device 66306, inode 14157244): 14 files, no impossibilities.
-
- 
-make: *** No rule to make target 'all'.  Stop.
 
 # 14 files, no impossibilities in 1 directories.
 
@@ -292,20 +310,14 @@ build-GetInvitationTemplateFunction:
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
-#  recipe to execute (from 'Makefile', line 7):
-	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o $(ARTIFACTS_DIR)/handler functions/get-invitation-template.go/main.go
-
-build-PlusTenFunction:
-#  Implicit rule search has not been done.
-#  Modification time never checked.
-#  File has not been updated.
-#  recipe to execute (from 'Makefile', line 4):
-	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o $(ARTIFACTS_DIR)/handler functions/PlusTen.go
+#  recipe to execute (from 'Makefile', line 8):
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o $(ARTIFACTS_DIR)/handler functions/get-template-email/getInvitationTemplate.go
+	
 
 # Not a target:
 Makefile:
 #  Implicit rule search has been done.
-#  Last modified 2022-08-26 22:31:41.769654905
+#  Last modified 2022-08-29 18:24:38.811191759
 #  File has been updated.
 #  Successfully updated.
 
@@ -313,9 +325,8 @@ build-SendInvitationFunction:
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
-#  recipe to execute (from 'Makefile', line 10):
-	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o $(ARTIFACTS_DIR)/handler functions/send-invitation.go/main.go
-	
+#  recipe to execute (from 'Makefile', line 11):
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o $(ARTIFACTS_DIR)/handler functions/send-invitation-email/sendInvitationEmail.go
 
 # Not a target:
 .DEFAULT:
@@ -336,6 +347,13 @@ build:
 #  File does not exist.
 #  File has not been updated.
 
+build-StoreSettingsFunction:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (from 'Makefile', line 4):
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o $(ARTIFACTS_DIR)/handler functions/store/storeSetting.go
+
 .PHONY: build
 #  Implicit rule search has not been done.
 #  Modification time never checked.
@@ -349,12 +367,12 @@ build:
 
 # No general ('VPATH' variable) search path.
 
-# strcache buffers: 1 (0) / strings = 24 / storage = 288 B / avg = 12 B
-# current buf: size = 8162 B / used = 288 B / count = 24 / avg = 12 B
+# strcache buffers: 1 (0) / strings = 24 / storage = 289 B / avg = 12 B
+# current buf: size = 8162 B / used = 289 B / count = 24 / avg = 12 B
 
 # strcache performance: lookups = 32 / hit rate = 25%
 # hash-table stats:
 # Load=24/8192=0%, Rehash=0, Collisions=0/32=0%
-# Finished Make data base on Sat Aug 27 11:25:46 2022
+# Finished Make data base on Mon Aug 29 21:56:02 2022
 
  

@@ -3,6 +3,12 @@ Transform: 'AWS::Serverless-2016-10-31'
 Description: >
   Prueba de CRUD
 
+Parameters:
+  SENDER:
+    Description: Ambiente despliegue
+    Type: String
+    Default: jose.porres@devmente.com  
+
 Resources:
  ###################
  ## AppSync Role  ##
@@ -114,6 +120,43 @@ Resources:
         Variables:
           SETTINGS_TABLE: !Ref DynamoSettingTableSample
 
+  
+  GetInvitationTemplateFunction:
+    Type: 'AWS::Serverless::Function'
+    Metadata:
+      BuildMethod: makefile
+    Properties:
+      Handler: handler
+      Runtime: go1.x
+      Environment:
+        Variables:
+          REGION: !Sub ${AWS::Region}
+          BucketName: !Ref TemplateBucket
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - S3ReadPolicy:
+            BucketName: !Ref TemplateBucket
+      
+  SendInvitationFunction:
+    Type: 'AWS::Serverless::Function'
+    Metadata:
+      BuildMethod: makefile
+    Properties:
+      Handler: handler
+      Runtime: go1.x
+      Environment:
+        Variables:
+          REGION: !Sub ${AWS::Region}
+          SENDER: !Ref SENDER
+      Policies:
+        - AWSLambdaBasicExecutionRole   
+        - Statement:
+          - Sid: SESPolicy
+            Effect: Allow
+            Action:
+              - ses:SendEmail
+            Resource: '*' 
+
   StoreSettingsResolver:
     Type: AWS::AppSync::Resolver
     DependsOn: AppSyncSchema
@@ -147,6 +190,8 @@ Resources:
       Type: EXPRESS
       DefinitionSubstitutions:
         StoreSettingsFunctionArn : !GetAtt StoreSettingsFunction.Arn 
+        GetInvitationTemplateFunctionArn : !GetAtt GetInvitationTemplateFunction.Arn
+        SendInvitationFunctionArn : !GetAtt SendInvitationFunction.Arn
         TableName: !Ref DynamoSettingTableSample
       Logging:
         Destinations:
@@ -159,6 +204,11 @@ Resources:
             TableName: !Ref DynamoSettingTableSample 
         - LambdaInvokePolicy:
             FunctionName: !Ref StoreSettingsFunction
+        - LambdaInvokePolicy:
+            FunctionName: !Ref GetInvitationTemplateFunction
+        - LambdaInvokePolicy:
+            FunctionName: !Ref SendInvitationFunction
+            
         - CloudWatchLogsFullAccess
     
 
@@ -172,7 +222,24 @@ Resources:
     Type: AWS::Logs::LogGroup
     Properties:
       LogGroupName: !Sub /aws/vendedlogs/states/${AWS::StackName}/createSettings
+      RetentionInDays: 3
+  
+  GetEmailLogs:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/vendedlogs/states/${AWS::StackName}/GetInvitation
       RetentionInDays: 3 
+  SendEmailLogs:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/vendedlogs/states/${AWS::StackName}/SendInvitation
+      RetentionInDays: 3 
+  
+  ###############      
+  ## S3 Bucket ##
+  ############### 
+  TemplateBucket:
+    Type: AWS::S3::Bucket
 
   ###############      
   ## DYNAMO DB ##

@@ -3,6 +3,11 @@ Transform: AWS::Serverless-2016-10-31
 Description: 'Prueba de CRUD
 
   '
+Parameters:
+  SENDER:
+    Description: Ambiente despliegue
+    Type: String
+    Default: jose.porres@devmente.com
 Resources:
   AppSyncServiceRole:
     Type: AWS::IAM::Role
@@ -125,6 +130,49 @@ Resources:
           SETTINGS_TABLE:
             Ref: DynamoSettingTableSample
       CodeUri: StoreSettingsFunction
+  GetInvitationTemplateFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: makefile
+      SamResourceId: GetInvitationTemplateFunction
+    Properties:
+      Handler: handler
+      Runtime: go1.x
+      Environment:
+        Variables:
+          REGION:
+            Fn::Sub: ${AWS::Region}
+          BucketName:
+            Ref: TemplateBucket
+      Policies:
+      - AWSLambdaBasicExecutionRole
+      - S3ReadPolicy:
+          BucketName:
+            Ref: TemplateBucket
+      CodeUri: GetInvitationTemplateFunction
+  SendInvitationFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: makefile
+      SamResourceId: SendInvitationFunction
+    Properties:
+      Handler: handler
+      Runtime: go1.x
+      Environment:
+        Variables:
+          REGION:
+            Fn::Sub: ${AWS::Region}
+          SENDER:
+            Ref: SENDER
+      Policies:
+      - AWSLambdaBasicExecutionRole
+      - Statement:
+        - Sid: SESPolicy
+          Effect: Allow
+          Action:
+          - ses:SendEmail
+          Resource: '*'
+      CodeUri: SendInvitationFunction
   StoreSettingsResolver:
     Type: AWS::AppSync::Resolver
     DependsOn: AppSyncSchema
@@ -157,6 +205,14 @@ Resources:
           Fn::GetAtt:
           - StoreSettingsFunction
           - Arn
+        GetInvitationTemplateFunctionArn:
+          Fn::GetAtt:
+          - GetInvitationTemplateFunction
+          - Arn
+        SendInvitationFunctionArn:
+          Fn::GetAtt:
+          - SendInvitationFunction
+          - Arn
         TableName:
           Ref: DynamoSettingTableSample
       Logging:
@@ -175,6 +231,12 @@ Resources:
       - LambdaInvokePolicy:
           FunctionName:
             Ref: StoreSettingsFunction
+      - LambdaInvokePolicy:
+          FunctionName:
+            Ref: GetInvitationTemplateFunction
+      - LambdaInvokePolicy:
+          FunctionName:
+            Ref: SendInvitationFunction
       - CloudWatchLogsFullAccess
   CreateSettingsLogs:
     Type: AWS::Logs::LogGroup
@@ -182,6 +244,20 @@ Resources:
       LogGroupName:
         Fn::Sub: /aws/vendedlogs/states/${AWS::StackName}/createSettings
       RetentionInDays: 3
+  GetEmailLogs:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName:
+        Fn::Sub: /aws/vendedlogs/states/${AWS::StackName}/GetInvitation
+      RetentionInDays: 3
+  SendEmailLogs:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName:
+        Fn::Sub: /aws/vendedlogs/states/${AWS::StackName}/SendInvitation
+      RetentionInDays: 3
+  TemplateBucket:
+    Type: AWS::S3::Bucket
   DynamoSettingTableSample:
     Type: AWS::DynamoDB::Table
     Properties:

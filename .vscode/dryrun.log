@@ -1,5 +1,5 @@
 make --dry-run --always-make --keep-going --print-directory
 make: Entering directory '/home/josedevmente/Documents/aws_sam/appsync/AppSync-sample'
-CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o /handler functions/PlusTen.go
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o /handler functions/store/storeSetting.go
 make: Leaving directory '/home/josedevmente/Documents/aws_sam/appsync/AppSync-sample'
  
