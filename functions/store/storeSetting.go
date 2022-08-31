@@ -26,16 +26,16 @@ type UserObject struct {
     Dni string `json:"dni"`
     Gender string `json:"gender"`
     BirthDate string `json:"birthDate"`
-    CountryBirth string `json:"countryBirth"`
-    EmailPersonal string `json:"emailPersonal"`
-    CivilState string `json:"civilState"`
-    PhonePersonal string `json:"phonePersonal"`
-    CountryResidence string `json:"countryResidence"`
-    DepartmentResidence string `json:"departmentResidence"`
+    CountryOfBirth string `json:"countryOfBirth"`
+    PersonalEmail string `json:"personalEmail"`
+    MaritalStatus string `json:"maritalStatus"`
+    PersonalPhone string `json:"personalPhone"`
+    CountryOfResidence string `json:"countryOfResidence"`
+    ResidenceDepartment string `json:"residenceDepartment"`
     Address string `json:"address"`
     Area string `json:"area"`
     SubArea string `json:"subArea"`
-    JobTittle string `json:"jobTittle"`
+    WorkerType string `json:"workerType"`
     Email string `json:"email"`
     EntryDate string `json:"entryDate"`
     LastSessionDate string `json:"lastSessionDate"`
@@ -62,16 +62,16 @@ type UserInput struct {
     Dni string `json:"dni"`
     Gender string `json:"gender"`
     BirthDate string `json:"birthDate"`
-    CountryBirth string `json:"countryBirth"`
-    EmailPersonal string `json:"emailPersonal"`
-    CivilState string `json:"civilState"`
-    PhonePersonal string `json:"phonePersonal"`
-    CountryResidence string `json:"countryResidence"`
-    DepartmentResidence string `json:"departmentResidence"`
+    CountryOfBirth string `json:"countryOfBirth"`
+    PersonalEmail string `json:"personalEmail"`
+    MaritalStatus string `json:"maritalStatus"`
+    PersonalPhone string `json:"personalPhone"`
+    CountryOfResidence string `json:"countryOfResidence"`
+    ResidenceDepartment string `json:"residenceDepartment"`
     Address string `json:"address"`
     Area string `json:"area"`
     SubArea string `json:"subArea"`
-    JobTittle string `json:"jobTittle"`
+    WorkerType string `json:"workerType"`
     Email string `json:"email"`
     EntryDate string `json:"entryDate"`
     LastSessionDate string `json:"lastSessionDate"`
@@ -115,16 +115,16 @@ func handler(ctx context.Context, event Event) (string, error) {
 		Dni: event.Settings.Dni,
 		Gender: event.Settings.Gender,
 		BirthDate: event.Settings.BirthDate,
-		CountryBirth: event.Settings.CountryBirth,
-		EmailPersonal: event.Settings.EmailPersonal,
-		CivilState: event.Settings.CivilState,
-		PhonePersonal: event.Settings.PhonePersonal,
-		CountryResidence: event.Settings.CountryResidence,
-		DepartmentResidence: event.Settings.DepartmentResidence,
+		CountryOfBirth: event.Settings.CountryOfBirth,
+		PersonalEmail: event.Settings.PersonalEmail,
+		MaritalStatus: event.Settings.MaritalStatus,
+		PersonalPhone: event.Settings.PersonalPhone,
+		CountryOfResidence: event.Settings.CountryOfResidence,
+		ResidenceDepartment: event.Settings.ResidenceDepartment,
 		Address: event.Settings.Address,
 		Area: event.Settings.Area,
 		SubArea: event.Settings.SubArea,
-		JobTittle: event.Settings.JobTittle,
+		WorkerType: event.Settings.WorkerType,
 		Email: event.Settings.Email,
 		EntryDate: event.Settings.EntryDate,
 		LastSessionDate: event.Settings.LastSessionDate,

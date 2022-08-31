@@ -39,72 +39,66 @@ type SettingsOB
     menu: [Option]!
     # Procesos
     processes:[Option]!
-    # foto
-    photo: String
-    # nombre completo
+    ###Datos Personales
+    # Nombre Completo
     name: String!
+    # Tipo de documento
+    docType: String!
     # numero de documento
     dni: String!
-    # tipo de documento
-    docType: String!
-    # email 		?? Email corporativo
-    email: String!
-    # telefono		?? Telefono corporativo
-    phone: String!
-    # departamento o area
-    area: String
-    # subdepartamento o subarea
-    subArea: String
-    # dias permitidos
-    days: Int!
-    # dias permitidos de home office
-    homeOffice: Int
-    # rol
-    role: String
-    # jefe
-    boss: String
-    # nombre del jefe
-    bossName: String
-    # backup
-    backup: String
-    # nombre del backup
-    backupName: String
-    # usuario
-    user: String
-    
-    ### New Attributes
     # Sexo
     gender: String
     # FechaNacimiento
-    dateBirth: String
-    # Pais de Nacimiento
-    countryBirth: String
+    birthDate: String
+    # Pais de Nacimiento   !pendiente de revisar
+    countryOfBirth: String
     # Email Personal
     personalEmail: String
     # Estado Civil
-    civilState: String
-    # Celular Personal
+    maritalStatus: String
+    # Celular
     personalPhone: String
     # Pais de Residencia
-    countryResidence: String
+    countryOfResidence: String
     # Departamento de Residencia
-    departmentResidence: String
+    residenceDepartment: String
     # Dirección
     address: String
-    
+    ###Datos Laborales
+    # departamento o area
+    area: String!
+    # subdepartamento o subarea
+    subArea: String!
     # Puesto o Cargo
-    jobTittle: String
+    workerType: String
+    # Correo Corporativo
+    email: String!
     # Fecha de Ingreso
     entryDate: String!
     # Fecha de Ultima Sesion
     lastSessionDate: String
-    # Fecha de Creación de Usuario
-    creationDate: String!
-    ## Pendiente Fecha de última modificación
-    # Estado de Usuario		Acá Sí
-    userState: String!
+    # Celular Corporativo 
+    phone: String
     # Tipo de Usuario
     userType: String!
+    ###
+    # Estado de Usuario 		ESTE NO pero sería bueno que estuviera como atributo
+    userState: String!
+    # rol
+    role: String
+    # cantidad dias permitidos
+    days: Int! 
+    # dias permitidos de home office
+    homeOffice: Int 
+    ## DUDAAAS
+    # foto
+    photo: String
+    # jefe
+    boss: String
+    # nombre del jefe
+    bossName: String
+    # user
+    user: String
 }
 
 
@@ -122,17 +116,17 @@ input SettingsOBInput {
     # FechaNacimiento
     birthDate: String
     # Pais de Nacimiento   !pendiente de revisar
-    countryBirth: String
+    countryOfBirth: String
     # Email Personal
-    emailPersonal: String
+    personalEmail: String
     # Estado Civil
-    civilState: String
+    maritalStatus: String
     # Celular
-    phonePersonal: String
+    personalPhone: String
     # Pais de Residencia
-    countryResidence: String
+    countryOfResidence: String
     # Departamento de Residencia
-    departmentResidence: String
+    residenceDepartment: String
     # Dirección
     address: String
     ###Datos Laborales
@@ -141,7 +135,7 @@ input SettingsOBInput {
     # subdepartamento o subarea
     subArea: String!
     # Puesto o Cargo
-    jobTittle: String
+    workerType: String
     # Correo Corporativo
     email: String!
     # Fecha de Ingreso

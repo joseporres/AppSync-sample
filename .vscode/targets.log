@@ -8,7 +8,7 @@ make: *** No rule to make target 'all'.  Stop.
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
 
-# Make data base, printed on Tue Aug 30 20:49:06 2022
+# Make data base, printed on Wed Aug 31 11:14:28 2022
 
 # Variables
 
@@ -59,7 +59,7 @@ LSCOLORS = Gxfxcxdxbxegedabagacad
 # environment
 XDG_DATA_DIRS = /usr/share/ubuntu:/usr/share/gnome:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop
 # environment
-OLDPWD = /home/josedevmente/Documents/aws_sam
+OLDPWD = /home/josedevmente/Documents/aws_sam/appsync
 # automatic
 ^D = $(patsubst %/,%,$(dir $^))
 # automatic
@@ -75,7 +75,7 @@ XAUTHORITY = /run/user/1000/gdm/Xauthority
 # default
 .INCLUDE_DIRS = /usr/local/include /usr/include /usr/include
 # environment
-GNOME_TERMINAL_SERVICE = :1.95
+GNOME_TERMINAL_SERVICE = :1.93
 # makefile
 MAKEFLAGS = pqrR
 # makefile
@@ -105,13 +105,13 @@ SNAP_REEXEC =
 # environment
 ZSH = /home/josedevmente/.oh-my-zsh
 # environment
-VSCODE_PID = 29593
+VSCODE_PID = 3505
 # environment
 XDG_SESSION_TYPE = x11
 # automatic
 ?D = $(patsubst %/,%,$(dir $?))
 # environment
-SESSION_MANAGER = local/joseDevmente:@/tmp/.ICE-unix/1286,unix/joseDevmente:/tmp/.ICE-unix/1286
+SESSION_MANAGER = local/joseDevmente:@/tmp/.ICE-unix/1302,unix/joseDevmente:/tmp/.ICE-unix/1302
 # automatic
 *F = $(notdir $*)
 # environment
@@ -135,7 +135,7 @@ XMODIFIERS = @im=ibus
 # environment
 SHLVL = 1
 # environment
-GNOME_TERMINAL_SCREEN = /org/gnome/Terminal/screen/d35ff2b4_96b7_4575_a4dc_3d182f33ea5f
+GNOME_TERMINAL_SCREEN = /org/gnome/Terminal/screen/fa88eb5a_0e3b_4d1f_b66c_79f75f456ee5
 # environment
 MAKELEVEL := 0
 # default
@@ -187,7 +187,7 @@ SNAP_ARCH = amd64
 # makefile
 .DEFAULT_GOAL := build-StoreSettingsFunction
 # environment
-SYSTEMD_EXEC_PID = 1306
+SYSTEMD_EXEC_PID = 1322
 # environment
 DISPLAY = :0
 # environment
@@ -280,7 +280,6 @@ SNAP_LIBRARY_PATH = /var/lib/snapd/lib/gl:/var/lib/snapd/lib/gl32:/var/lib/snapd
 # . (device 66306, inode 14157244): 14 files, no impossibilities.
 
 # 14 files, no impossibilities in 1 directories.
- 
 
 # Implicit Rules
 
@@ -292,6 +291,7 @@ build-GetInvitationTemplateFunction:
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
+ 
 #  recipe to execute (from 'Makefile', line 8):
 	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o $(ARTIFACTS_DIR)/handler functions/get-template-email/getInvitationTemplate.go
 	
@@ -355,6 +355,6 @@ build-StoreSettingsFunction:
 # strcache performance: lookups = 32 / hit rate = 25%
 # hash-table stats:
 # Load=24/8192=0%, Rehash=0, Collisions=0/32=0%
-# Finished Make data base on Tue Aug 30 20:49:06 2022
+# Finished Make data base on Wed Aug 31 11:14:28 2022
 
  
