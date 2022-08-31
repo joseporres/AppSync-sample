@@ -8,7 +8,7 @@ make: *** No rule to make target 'all'.  Stop.
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
 
-# Make data base, printed on Mon Aug 29 21:56:02 2022
+# Make data base, printed on Tue Aug 30 20:49:06 2022
 
 # Variables
 
@@ -17,15 +17,11 @@ GDK_BACKEND = x11
 # environment
 LC_ALL = C
 # environment
-NO_AT_BRIDGE = 1
-# environment
 GNOME_SHELL_SESSION_MODE = ubuntu
 # environment
 SSH_AGENT_LAUNCHER = gnome-keyring
 # environment
 SNAP_INSTANCE_KEY = 
-# environment
-GJS_DEBUG_OUTPUT = stderr
 # environment
 MANDATORY_PATH = /usr/share/gconf/ubuntu.mandatory.path
 # environment
@@ -63,7 +59,7 @@ LSCOLORS = Gxfxcxdxbxegedabagacad
 # environment
 XDG_DATA_DIRS = /usr/share/ubuntu:/usr/share/gnome:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop
 # environment
-OLDPWD = /home/josedevmente/Documents/aws_sam/appsync
+OLDPWD = /home/josedevmente/Documents/aws_sam
 # automatic
 ^D = $(patsubst %/,%,$(dir $^))
 # automatic
@@ -79,7 +75,7 @@ XAUTHORITY = /run/user/1000/gdm/Xauthority
 # default
 .INCLUDE_DIRS = /usr/local/include /usr/include /usr/include
 # environment
-GNOME_TERMINAL_SERVICE = :1.121
+GNOME_TERMINAL_SERVICE = :1.95
 # makefile
 MAKEFLAGS = pqrR
 # makefile
@@ -109,15 +105,13 @@ SNAP_REEXEC =
 # environment
 ZSH = /home/josedevmente/.oh-my-zsh
 # environment
-VSCODE_PID = 3883
+VSCODE_PID = 29593
 # environment
 XDG_SESSION_TYPE = x11
 # automatic
 ?D = $(patsubst %/,%,$(dir $?))
 # environment
-BAMF_DESKTOP_FILE_HINT = /var/lib/snapd/desktop/applications/code_code.desktop
-# environment
-SESSION_MANAGER = local/joseDevmente:@/tmp/.ICE-unix/1292,unix/joseDevmente:/tmp/.ICE-unix/1292
+SESSION_MANAGER = local/joseDevmente:@/tmp/.ICE-unix/1286,unix/joseDevmente:/tmp/.ICE-unix/1286
 # automatic
 *F = $(notdir $*)
 # environment
@@ -139,11 +133,9 @@ MAKECMDGOALS := all
 # environment
 XMODIFIERS = @im=ibus
 # environment
-GJS_DEBUG_TOPICS = JS ERROR;JS LOG
-# environment
 SHLVL = 1
 # environment
-GNOME_TERMINAL_SCREEN = /org/gnome/Terminal/screen/5ba90b98_3afd_4660_8283_8957e9289504
+GNOME_TERMINAL_SCREEN = /org/gnome/Terminal/screen/d35ff2b4_96b7_4575_a4dc_3d182f33ea5f
 # environment
 MAKELEVEL := 0
 # default
@@ -164,8 +156,6 @@ SNAP_USER_COMMON = /home/josedevmente/snap/code/common
 LC_TIME = agr_PE
 # environment
 SNAP = /snap/code/105
-# environment
-INVOCATION_ID = b49ecf3ab7bd43be826e976c0e45f04e
 # environment
 SNAP_REVISION = 105
 # environment
@@ -193,13 +183,11 @@ GNUMAKEFLAGS :=
 # environment
 LOGNAME = josedevmente
 # environment
-GIO_LAUNCHED_DESKTOP_FILE = /var/lib/snapd/desktop/applications/code_code.desktop
-# environment
 SNAP_ARCH = amd64
 # makefile
 .DEFAULT_GOAL := build-StoreSettingsFunction
 # environment
-SYSTEMD_EXEC_PID = 1312
+SYSTEMD_EXEC_PID = 1306
 # environment
 DISPLAY = :0
 # environment
@@ -217,11 +205,7 @@ SNAP_DATA = /var/snap/code/105
 # environment
 SNAP_CONTEXT = El7ilc_S_C45ohgYyla2ojI97CDABdMzTTY0r62ohH2rZPx0iKnD
 # environment
-MANAGERPID = 933
-# environment
 LC_MEASUREMENT = agr_PE
-# environment
-GIO_LAUNCHED_DESKTOP_FILE_PID = 3834
 # environment
 PAGER = less
 # environment
@@ -234,8 +218,6 @@ GPG_AGENT_INFO = /run/user/1000/gnupg/S.gpg-agent:0:1
 COLORTERM = truecolor
 # environment
 GDK_PIXBUF_MODULE_FILE = /home/josedevmente/snap/code/common/.cache/gdk-pixbuf-loaders.cache
-# environment
-JOURNAL_STREAM = 8:32944
 # environment
 GOMODCACHE = /home/josedevmente/go/pkg/mod
 # environment
@@ -278,7 +260,6 @@ SNAP_COMMON = /var/snap/code/common
 .FEATURES := target-specific order-only second-expansion else-if shortest-stem undefine oneshell nocomment grouped-target extra-prereqs archives jobserver output-sync check-symlink load
 # environment
 SNAP_USER_DATA = /home/josedevmente/snap/code/105
- 
 # environment
 XDG_MENU_PREFIX = gnome-
 # environment
@@ -288,7 +269,7 @@ LC_IDENTIFICATION = agr_PE
 # environment
 SNAP_LIBRARY_PATH = /var/lib/snapd/lib/gl:/var/lib/snapd/lib/gl32:/var/lib/snapd/void
 # variable set hash-table stats:
-# Load=137/1024=13%, Rehash=0, Collisions=13/167=8%
+# Load=128/1024=12%, Rehash=0, Collisions=12/158=8%
 
 # Pattern-specific Variable Values
 
@@ -299,6 +280,7 @@ SNAP_LIBRARY_PATH = /var/lib/snapd/lib/gl:/var/lib/snapd/lib/gl32:/var/lib/snapd
 # . (device 66306, inode 14157244): 14 files, no impossibilities.
 
 # 14 files, no impossibilities in 1 directories.
+ 
 
 # Implicit Rules
 
@@ -373,6 +355,6 @@ build-StoreSettingsFunction:
 # strcache performance: lookups = 32 / hit rate = 25%
 # hash-table stats:
 # Load=24/8192=0%, Rehash=0, Collisions=0/32=0%
-# Finished Make data base on Mon Aug 29 21:56:02 2022
+# Finished Make data base on Tue Aug 30 20:49:06 2022
 
  
