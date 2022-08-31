@@ -32,8 +32,10 @@ type deps struct {
 type Event struct {
 	Email    string `json:"email"`
 	Name     string `json:"name"`
-	HTMLBody string `json:"template"`
+	Template string `json:"template"`
 }
+
+
 
 func (d *deps) handler(ctx context.Context, event Event) (string, error) {
 	// Create a new session in the us-west-2 region.
@@ -44,9 +46,7 @@ func (d *deps) handler(ctx context.Context, event Event) (string, error) {
 	if err != nil {
 		fmt.Println(err.Error())
 	}
-
 	body := `¡Hola %s!
-
 	¡Bienvenido/a a la Oficina Virtual de Protecta Security!
 	Es necesario que inicies sesión. Para ello debes realizar lo siguiente:
 		 1. Ingresa aquí.
@@ -54,17 +54,8 @@ func (d *deps) handler(ctx context.Context, event Event) (string, error) {
 		 3. En la nueva ventana abierta, clic en su cuenta corporativa de Protecta.
 	¡Listo! Para volver a iniciar sesión deberás seguir los pasos anteriores.`
 
-
-	//  // The HTML body for the email.
-	//  testBody :=  "<h1>Amazon SES Test Email (AWS SDK for Go)</h1><p>This email was sent with " +
-	//  "<a href='https://aws.amazon.com/ses/'>Amazon SES</a> using the " +
-	//  "<a href='https://aws.amazon.com/sdk-for-go/'>AWS SDK for Go</a>.</p>"
-
-	// //The email body for recipients with non-HTML email clients.
-	// testText := "This email was sent with Amazon SES using the AWS SDK for Go."
-
 	message := fmt.Sprintf(body, event.Name)
-	t, err := template.New("mailhtml").Parse(event.HTMLBody)
+	t, err := template.New("mailhtml").Parse(event.Template)
 	if err != nil {
 		fmt.Println(err.Error())
 	}
@@ -74,6 +65,8 @@ func (d *deps) handler(ctx context.Context, event Event) (string, error) {
 	}
 
 	resultT := tpl.String()
+
+	fmt.Println("HTML IN BUFFER: ",resultT)
 
 	// Create an SES session.
 	svc := ses.New(sess)
@@ -99,14 +92,14 @@ func (d *deps) handler(ctx context.Context, event Event) (string, error) {
 			},
 			Subject: &ses.Content{
 				Charset: aws.String(charSet),
-				Data:    aws.String(fmt.Sprintf("Invitación a Oficina Virtual: Cuenta Nueva")),
+				Data:    aws.String(fmt.Sprintf("[Pendiente] Tienes una solicitud de aprobación pendiente de %s", event.Name)),
 			},
 		},
 		Source: aws.String(os.Getenv("SENDER")),
 		// Uncomment to use a configuration set
 		//ConfigurationSetName: aws.String(ConfigurationSet),
 	}
-
+	
 	// Attempt to send the email.
 	result, err := svc.SendEmail(input)
 
@@ -132,13 +125,12 @@ func (d *deps) handler(ctx context.Context, event Event) (string, error) {
 
 	}
 
-	fmt.Println("Email Sent to address: " + event.Email)
-
+	
 	fmt.Println(result)
 	return "success", nil
 }
 
 func main() {
-	d := deps{}
+	d := &deps{}
 	lambda.Start(d.handler)
 }

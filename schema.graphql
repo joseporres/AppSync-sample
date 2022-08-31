@@ -75,15 +75,10 @@ type SettingsOB
     email: String!
     # Fecha de Ingreso
     entryDate: String!
-    # Fecha de Ultima Sesion
-    lastSessionDate: String
     # Celular Corporativo 
     phone: String
     # Tipo de Usuario
     userType: String!
-    ###
-    # Estado de Usuario 		ESTE NO pero sería bueno que estuviera como atributo
-    userState: String!
     # rol
     role: String
     # cantidad dias permitidos
@@ -140,8 +135,6 @@ input SettingsOBInput {
     email: String!
     # Fecha de Ingreso
     entryDate: String!
-    # Fecha de Ultima Sesion
-    lastSessionDate: String
     # Celular Corporativo 
     phone: String
 
@@ -155,8 +148,6 @@ input SettingsOBInput {
     # Tipo de Usuario
     userType: String!
     ###
-    # Estado de Usuario 		ESTE NO pero sería bueno que estuviera como atributo
-    userState: String!
     # rol
     role: String
     # cantidad dias permitidos
@@ -172,6 +163,10 @@ input SettingsOBInput {
     bossName: String
     # user
     user: String
+    #backup
+    backup: String!
+    #nombre del backup
+    backupName: String!
 }
 type Query {
     # get settings

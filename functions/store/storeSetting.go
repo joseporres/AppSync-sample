@@ -38,13 +38,11 @@ type UserObject struct {
     WorkerType string `json:"workerType"`
     Email string `json:"email"`
     EntryDate string `json:"entryDate"`
-    LastSessionDate string `json:"lastSessionDate"`
     Phone string `json:"phone"`
     Apps []Option `json:"apps"`
     Menu []Option `json:"menu"`
     Processes []Option `json:"processes"`
     UserType string `json:"userType"`
-    UserState string `json:"userState"`
     Role string `json:"role"`
     Days int `json:"days"`
     HomeOffice int `json:"homeOffice"`
@@ -52,6 +50,8 @@ type UserObject struct {
     Boss string `json:"boss"`
     BossName string `json:"bossName"`
     User string `json:"user"`
+	Backup string `json:"backup"`
+    BackupName string `json:"backupName"`
 }
 
 type UserInput struct {
@@ -74,7 +74,6 @@ type UserInput struct {
     WorkerType string `json:"workerType"`
     Email string `json:"email"`
     EntryDate string `json:"entryDate"`
-    LastSessionDate string `json:"lastSessionDate"`
     Phone string `json:"phone"`
     Apps []Option `json:"apps"`
     Menu []Option `json:"menu"`
@@ -88,6 +87,9 @@ type UserInput struct {
     Boss string `json:"boss"`
     BossName string `json:"bossName"`
     User string `json:"user"`
+	Backup string `json:"backup"`
+    BackupName string `json:"backupName"`
+	
 }
 
 type Event struct{
@@ -127,13 +129,12 @@ func handler(ctx context.Context, event Event) (string, error) {
 		WorkerType: event.Settings.WorkerType,
 		Email: event.Settings.Email,
 		EntryDate: event.Settings.EntryDate,
-		LastSessionDate: event.Settings.LastSessionDate,
 		Phone: event.Settings.Phone,
 		Apps: event.Settings.Apps,
 		Menu: event.Settings.Menu,
 		Processes: event.Settings.Processes,
 		UserType: event.Settings.UserType,
-		UserState: event.Settings.UserState,
+		UserState: "UNCONFIRMED",
 		Role: event.Settings.Role,
 		Days: event.Settings.Days,
 		HomeOffice: event.Settings.HomeOffice,
@@ -141,6 +142,8 @@ func handler(ctx context.Context, event Event) (string, error) {
 		Boss: event.Settings.Boss,
 		BossName: event.Settings.BossName,
 		User: event.Settings.User,
+		Backup: event.Settings.Backup,
+		BackupName: event.Settings.BackupName,
 	}
 
 	fmt.Println("Evento: ", event)

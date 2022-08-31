@@ -31,7 +31,7 @@ func handler(ctx context.Context, event Event) (string, error) {
 
 	switch userType {
     case "Interno":
-        htmlPage = "prueba.html"
+        htmlPage = "interno.html"
     case "Externo":
         htmlPage = "externo.html"
     }
