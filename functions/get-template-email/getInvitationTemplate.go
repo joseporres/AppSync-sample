@@ -30,11 +30,13 @@ func handler(ctx context.Context, event Event) (string, error) {
 	var htmlPage string
 
 	switch userType {
-    case "Interno":
-        htmlPage = "interno.html"
-    case "Externo":
-        htmlPage = "externo.html"
-    }
+	case "Usuario Protecta":
+		htmlPage = "interno.html"
+	case "Administrador Protecta":
+		htmlPage = "interno.html"
+	case "Usuario Externo":
+		htmlPage = "externo.html"
+	}
 
 	rawObject, err := svc.GetObject(
 		&s3.GetObjectInput{

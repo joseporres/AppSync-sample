@@ -113,6 +113,26 @@ Resources:
           Ref: DynamoSettingTableSample
         AwsRegion:
           Fn::Sub: ${AWS::Region}
+  CheckEmailUserTypeFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: makefile
+      SamResourceId: CheckEmailUserTypeFunction
+    Properties:
+      Handler: handler
+      Runtime: go1.x
+      Environment:
+        Variables:
+          REGION:
+            Fn::Sub: ${AWS::Region}
+          BucketName:
+            Ref: TemplateBucket
+      Policies:
+      - AWSLambdaBasicExecutionRole
+      - S3ReadPolicy:
+          BucketName:
+            Ref: TemplateBucket
+      CodeUri: CheckEmailUserTypeFunction
   StoreSettingsFunction:
     Type: AWS::Serverless::Function
     Metadata:
@@ -202,6 +222,11 @@ Resources:
       Type: EXPRESS
       DefinitionSubstitutions:
         DDBQuery: arn:aws:states:::aws-sdk:dynamodb:query
+        DDBUpdateItem: arn:aws:states:::dynamodb:updateItem
+        CheckEmailUserTypeFunctionArn:
+          Fn::GetAtt:
+          - CheckEmailUserTypeFunction
+          - Arn
         StoreSettingsFunctionArn:
           Fn::GetAtt:
           - StoreSettingsFunction
@@ -210,10 +235,13 @@ Resources:
           Fn::GetAtt:
           - GetInvitationTemplateFunction
           - Arn
-        DDBUpdateItem: arn:aws:states:::dynamodb:updateItem
         SendInvitationFunctionArn:
           Fn::GetAtt:
           - SendInvitationFunction
+          - Arn
+        GetAndSendInvitationStateMachineArn:
+          Fn::GetAtt:
+          - GetAndSendInvitationStateMachine
           - Arn
         TableName:
           Ref: DynamoSettingTableSample
@@ -233,6 +261,39 @@ Resources:
       - LambdaInvokePolicy:
           FunctionName:
             Ref: StoreSettingsFunction
+      - StepFunctionsExecutionPolicy:
+          StateMachineName:
+            Fn::GetAtt:
+            - GetAndSendInvitationStateMachine
+            - Name
+      - LambdaInvokePolicy:
+          FunctionName:
+            Ref: CheckEmailUserTypeFunction
+      - CloudWatchLogsFullAccess
+  GetAndSendInvitationStateMachine:
+    Type: AWS::Serverless::StateMachine
+    Properties:
+      DefinitionUri: ../../statemachines/get-send-invitation.asl.json
+      Type: EXPRESS
+      DefinitionSubstitutions:
+        GetInvitationTemplateFunctionArn:
+          Fn::GetAtt:
+          - GetInvitationTemplateFunction
+          - Arn
+        SendInvitationFunctionArn:
+          Fn::GetAtt:
+          - SendInvitationFunction
+          - Arn
+      Logging:
+        Destinations:
+        - CloudWatchLogsLogGroup:
+            LogGroupArn:
+              Fn::GetAtt:
+              - CreateSettingsLogs
+              - Arn
+        IncludeExecutionData: true
+        Level: ALL
+      Policies:
       - LambdaInvokePolicy:
           FunctionName:
             Ref: GetInvitationTemplateFunction

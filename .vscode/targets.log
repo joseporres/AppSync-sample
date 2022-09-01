@@ -1,4 +1,6 @@
 make all --print-data-base --no-builtin-variables --no-builtin-rules --question
+make: *** No rule to make target 'all'.  Stop.
+
 # GNU Make 4.3
 # Built for x86_64-pc-linux-gnu
 # Copyright (C) 1988-2020 Free Software Foundation, Inc.
@@ -6,7 +8,7 @@ make all --print-data-base --no-builtin-variables --no-builtin-rules --question
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
 
-# Make data base, printed on Thu Sep  1 09:11:52 2022
+# Make data base, printed on Thu Sep  1 14:25:15 2022
 
 # Variables
 
@@ -103,7 +105,7 @@ SNAP_REEXEC =
 # environment
 ZSH = /home/josedevmente/.oh-my-zsh
 # environment
-VSCODE_PID = 4774
+VSCODE_PID = 2856
 # environment
 XDG_SESSION_TYPE = x11
 # automatic
@@ -111,7 +113,7 @@ XDG_SESSION_TYPE = x11
 # environment
 BAMF_DESKTOP_FILE_HINT = /var/lib/snapd/desktop/applications/code_code.desktop
 # environment
-SESSION_MANAGER = local/joseDevmente:@/tmp/.ICE-unix/1287,unix/joseDevmente:/tmp/.ICE-unix/1287
+SESSION_MANAGER = local/joseDevmente:@/tmp/.ICE-unix/1303,unix/joseDevmente:/tmp/.ICE-unix/1303
 # automatic
 *F = $(notdir $*)
 # environment
@@ -157,7 +159,7 @@ LC_TIME = agr_PE
 # environment
 SNAP = /snap/code/105
 # environment
-INVOCATION_ID = fc5e4d747d924bc8b15d84106440b6ab
+INVOCATION_ID = 601e1a9eaa814476b7cbe8c74cb8813b
 # environment
 SNAP_REVISION = 105
 # environment
@@ -191,7 +193,7 @@ SNAP_ARCH = amd64
 # makefile
 .DEFAULT_GOAL := build-StoreSettingsFunction
 # environment
-SYSTEMD_EXEC_PID = 1307
+SYSTEMD_EXEC_PID = 1323
 # environment
 DISPLAY = :0
 # environment
@@ -209,11 +211,11 @@ SNAP_DATA = /var/snap/code/105
 # environment
 SNAP_CONTEXT = El7ilc_S_C45ohgYyla2ojI97CDABdMzTTY0r62ohH2rZPx0iKnD
 # environment
-MANAGERPID = 932
+MANAGERPID = 959
 # environment
 LC_MEASUREMENT = agr_PE
 # environment
-GIO_LAUNCHED_DESKTOP_FILE_PID = 4734
+GIO_LAUNCHED_DESKTOP_FILE_PID = 2612
 # environment
 PAGER = less
 # environment
@@ -227,7 +229,7 @@ GPG_AGENT_INFO = /run/user/1000/gnupg/S.gpg-agent:0:1
 # environment
 GDK_PIXBUF_MODULE_FILE = /home/josedevmente/snap/code/common/.cache/gdk-pixbuf-loaders.cache
 # environment
-JOURNAL_STREAM = 8:33913
+JOURNAL_STREAM = 8:21326
 # environment
 GOMODCACHE = /home/josedevmente/go/pkg/mod
 # environment
@@ -267,9 +269,6 @@ SNAP_COMMON = /var/snap/code/common
 # environment
 SNAP_USER_DATA = /home/josedevmente/snap/code/105
 # environment
- 
-make: *** No rule to make target 'all'.  Stop.
-
 XDG_MENU_PREFIX = gnome-
 # environment
 GDMSESSION = ubuntu
@@ -281,6 +280,7 @@ SNAP_LIBRARY_PATH = /var/lib/snapd/lib/gl:/var/lib/snapd/lib/gl32:/var/lib/snapd
 # Load=132/1024=13%, Rehash=0, Collisions=6/162=4%
 
 # Pattern-specific Variable Values
+ 
 
 # No pattern-specific variable values.
 
@@ -363,6 +363,6 @@ build-StoreSettingsFunction:
 # strcache performance: lookups = 32 / hit rate = 25%
 # hash-table stats:
 # Load=24/8192=0%, Rehash=0, Collisions=0/32=0%
-# Finished Make data base on Thu Sep  1 09:11:52 2022
+# Finished Make data base on Thu Sep  1 14:25:15 2022
 
  

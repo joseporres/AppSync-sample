@@ -1,7 +1,28 @@
 {
     "Comment": "Register User",
-    "StartAt": "Get User",
+    "StartAt": "Check Email",
     "States": {
+        "Check Email": {
+            "Type": "Task",
+            "Resource": "${CheckEmailUserTypeFunctionArn}",
+            "Parameters": {
+                "userType.$": "$$.Execution.Input.settings.userType",
+                "email.$": "$$.Execution.Input.settings.email"
+            },
+            "ResultPath": "$",
+            "Next": "Valid Email??"
+        },
+        "Valid Email??": {
+            "Type": "Choice",
+            "Choices": [
+                {
+                    "Variable": "$",
+                    "BooleanEquals": true,
+                    "Next": "Get User"
+                }
+            ],
+            "Default": "Denied Access"
+        },
         "Get User": {
             "Type": "Task",
             "Resource": "${DDBQuery}",
@@ -42,25 +63,21 @@
                 "settings.$" : "$$.Execution.Input.settings"
             },
             "ResultPath": null,
-            "Next": "Get Email Template"
+            "Next": "Get and Send Invitation"
         },   
-        "Get Email Template": {
+        "Get and Send Invitation": {
             "Type": "Task",
-            "Resource": "${GetInvitationTemplateFunctionArn}",
+            "Resource": "arn:aws:states:::states:startExecution",
             "Parameters": {
-                "userType.$": "$$.Execution.Input.settings.userType"
+                "Input":{
+                    "userType.$": "$$.Execution.Input.settings.userType",
+                    "email.$": "$$.Execution.Input.settings.email",
+                    "name.$": "$$.Execution.Input.settings.name"
+                },
+                "StateMachineArn": "${GetAndSendInvitationStateMachineArn}",
+                "Name":"GetSendInvitation"
             },
-            "ResultPath": "$",
-            "Next": "Send Email"
-        },
-        "Send Email": {
-            "Type": "Task",
-            "Resource": "${SendInvitationFunctionArn}",
-            "Parameters": {
-                "email.$": "$$.Execution.Input.settings.email",
-                "name.$": "$$.Execution.Input.settings.name",
-                "HTMLBody.$": "$"
-            },
+            "ResultPath":null,
             "Next": "Access Granted"
         },
         "Access Granted": {
