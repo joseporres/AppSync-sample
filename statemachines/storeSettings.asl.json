@@ -21,7 +21,7 @@
                     "Next": "Get User"
                 }
             ],
-            "Default": "Denied Access"
+            "Default": "Error Email Not Valid"
         },
         "Get User": {
             "Type": "Task",
@@ -54,7 +54,7 @@
                     "Next": "Create User"
                 }
             ],
-            "Default": "Denied Access"
+            "Default": "Error User Exist"
         },
         "Create User": {
             "Type": "Task",
@@ -87,10 +87,19 @@
             },           
             "End": true
         },
-        "Denied Access": {
+        "Error Email Not Valid": {
             "Type": "Pass",
             "Parameters": {
-                "Acceso": "NO"
+                "Acceso": "NO",
+                "Error": 1
+            },           
+            "End": true
+        },
+        "Error User Exist": {
+            "Type": "Pass",
+            "Parameters": {
+                "Acceso": "NO",
+                "Error": 2
             },           
             "End": true
         }
