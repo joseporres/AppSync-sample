@@ -168,6 +168,8 @@ input SettingsOBInput {
     #nombre del backup
     backupName: String!
 }
+
+
 type Query {
     # get settings
     getSettings: SettingsOB

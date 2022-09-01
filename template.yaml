@@ -189,8 +189,10 @@ Resources:
       DefinitionUri: statemachines/storeSettings.asl.json
       Type: EXPRESS
       DefinitionSubstitutions:
+        DDBQuery: arn:aws:states:::aws-sdk:dynamodb:query     
         StoreSettingsFunctionArn : !GetAtt StoreSettingsFunction.Arn 
         GetInvitationTemplateFunctionArn : !GetAtt GetInvitationTemplateFunction.Arn
+        DDBUpdateItem: arn:aws:states:::dynamodb:updateItem        
         SendInvitationFunctionArn : !GetAtt SendInvitationFunction.Arn
         TableName: !Ref DynamoSettingTableSample
       Logging:
@@ -252,13 +254,24 @@ Resources:
         - AttributeName: id
           AttributeType: S
         - AttributeName: sort
-          AttributeType: S        
+          AttributeType: S
+        - AttributeName: email
+          AttributeType: S       
       KeySchema:
         - AttributeName: id
           KeyType: HASH
         - AttributeName: sort
           KeyType: RANGE
       BillingMode: PAY_PER_REQUEST
+      GlobalSecondaryIndexes:
+        - IndexName: email-sort
+          KeySchema:
+            - AttributeName: email
+              KeyType: HASH
+            - AttributeName: sort
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
 
 Outputs:
   APIKey:

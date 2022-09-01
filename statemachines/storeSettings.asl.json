@@ -1,20 +1,56 @@
 {
     "Comment": "Register User",
-    "StartAt": "Create User",
+    "StartAt": "Get User",
     "States": {
+        "Get User": {
+            "Type": "Task",
+            "Resource": "${DDBQuery}",
+            "Parameters": {
+                "TableName": "${TableName}",
+                "KeyConditionExpression": "email = :email AND sort = :sort",
+                "IndexName": "email-sort",
+                "ExpressionAttributeValues": {
+                    ":email": {
+                        "S.$": "$$.Execution.Input.settings.email"
+                    },
+                    ":sort": {
+                        "S": "SETTINGS"
+                    }
+                },
+                "ProjectionExpression": "id"
+            },
+            "OutputPath": "$.Count",
+            "Next": "Exist User??"
+        },
+
+        
+        "Exist User??": {
+            "Type": "Choice",
+            "Choices": [
+                {
+                    "Variable": "$",
+                    "NumericEquals": 0,
+                    "Next": "Create User"
+                }
+            ],
+            "Default": "Denied Access"
+        },
         "Create User": {
             "Type": "Task",
             "Resource": "${StoreSettingsFunctionArn}",
-            "ResultPath": "$.Created",
+            "Parameters": {
+                "settings.$" : "$$.Execution.Input.settings"
+            },
+            "ResultPath": null,
             "Next": "Get Email Template"
-        },
+        },   
         "Get Email Template": {
             "Type": "Task",
             "Resource": "${GetInvitationTemplateFunctionArn}",
             "Parameters": {
                 "userType.$": "$$.Execution.Input.settings.userType"
             },
-            "ResultPath": "$.template",
+            "ResultPath": "$",
             "Next": "Send Email"
         },
         "Send Email": {
@@ -23,9 +59,22 @@
             "Parameters": {
                 "email.$": "$$.Execution.Input.settings.email",
                 "name.$": "$$.Execution.Input.settings.name",
-                "HTMLBody.$": "$.template"
+                "HTMLBody.$": "$"
             },
-            "OutputPath": "$",
+            "Next": "Access Granted"
+        },
+        "Access Granted": {
+            "Type": "Pass",
+            "Parameters": {
+                "Acceso": "SI"
+            },           
+            "End": true
+        },
+        "Denied Access": {
+            "Type": "Pass",
+            "Parameters": {
+                "Acceso": "NO"
+            },           
             "End": true
         }
     }

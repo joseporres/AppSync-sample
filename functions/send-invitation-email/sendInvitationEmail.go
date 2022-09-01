@@ -32,7 +32,7 @@ type deps struct {
 type Event struct {
 	Email    string `json:"email"`
 	Name     string `json:"name"`
-	Template string `json:"template"`
+	Template string `json:"HTMLTemplate"`
 }
 
 
