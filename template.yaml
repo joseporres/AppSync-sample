@@ -135,6 +135,8 @@ Resources:
       Environment:
         Variables:
           SETTINGS_TABLE: !Ref DynamoSettingTableSample
+  
+
 
   
   GetInvitationTemplateFunction:
@@ -171,7 +173,22 @@ Resources:
             Effect: Allow
             Action:
               - ses:SendEmail
-            Resource: '*' 
+            Resource: '*'
+
+  CreateAppsProcessFunction:         
+    Type: 'AWS::Serverless::Function'
+    Metadata:
+      BuildMethod: makefile
+    Properties:
+      Handler: handler
+      Runtime: go1.x
+      Policies: 
+          - DynamoDBCrudPolicy:
+              TableName: !Ref DynamoSettingTableSample
+      Environment:
+        Variables:
+          TABLENAME: !Ref DynamoSettingTableSample 
+  
 
   StoreSettingsResolver:
     Type: AWS::AppSync::Resolver

@@ -193,6 +193,23 @@ Resources:
           - ses:SendEmail
           Resource: '*'
       CodeUri: SendInvitationFunction
+  CreateAppsProcessFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: makefile
+      SamResourceId: CreateAppsProcessFunction
+    Properties:
+      Handler: handler
+      Runtime: go1.x
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName:
+            Ref: DynamoSettingTableSample
+      Environment:
+        Variables:
+          TABLENAME:
+            Ref: DynamoSettingTableSample
+      CodeUri: CreateAppsProcessFunction
   StoreSettingsResolver:
     Type: AWS::AppSync::Resolver
     DependsOn: AppSyncSchema
