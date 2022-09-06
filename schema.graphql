@@ -97,7 +97,7 @@ type SettingsOB
 }
 
 
-
+    
 input SettingsOBInput {
     ###Datos Personales
     # Nombre Completo
@@ -169,10 +169,30 @@ input SettingsOBInput {
     backupName: String!
 }
 
+type AppObject{
+    # activo o no
+    active: Boolean!
+    # icono de la aplicacion
+    icon: String
+    # nombre de la aplicacion
+    title: String!
+    # url de la aplicacion
+    url: String!
+}
+
+type AppOutput{
+    app: AppObject
+}
+
+input AppInput{
+    id: String
+    sort: String
+}
+
 
 type Query {
     # get settings
-    getSettings: SettingsOB
+    getApp(app: AppInput): AppObject
 }
 
 

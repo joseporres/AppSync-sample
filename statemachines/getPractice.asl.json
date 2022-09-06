@@ -1,0 +1,17 @@
+{
+    "Comment": "Practice",
+    "StartAt": "Get Practice",
+    "States": {
+        "Get Practice": {
+            "Type": "Task",
+            "Resource": "${GetPracticeFunctionArn}",
+            "Parameters": {
+                "id.$": "$$.Execution.Input.id",
+                "sort.$": "$$.Execution.Input.sort"
+            },
+            "ResultPath": "$",
+            "End": true
+        }
+
+    }
+}

@@ -35,6 +35,7 @@ Resources:
                   - states:StartSyncExecution
                 Resource:
                   - !Ref StoreSettingsStateMachine
+                  - !Ref GetPracticeStateMachine
               - Effect: Allow
                 Action:
                   - dynamodb:GetItem
@@ -270,9 +271,70 @@ Resources:
             FunctionName: !Ref SendInvitationFunction
             
         - CloudWatchLogsFullAccess
+  
+  GetPracticeFunction:         
+    Type: 'AWS::Serverless::Function'
+    Metadata:
+      BuildMethod: makefile
+    Properties:
+      Handler: handler
+      Runtime: go1.x
+      Policies: 
+          - DynamoDBCrudPolicy:
+              TableName: !Ref DynamoSettingTableSample
+      Environment:
+        Variables:
+          TABLENAME: !Ref DynamoSettingTableSample 
 
+  GetAppResolver:
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      TypeName: Query
+      FieldName: getApp
+      DataSourceName: !GetAtt StepFunctionsHttpDataSource.Name
+      RequestMappingTemplate: !Sub >
+        {
+          "version": "2018-05-29",
+          "method": "POST",
+          "resourcePath": "/",
+          "params": {
+            "headers": {
+              "content-type": "application/x-amz-json-1.0",
+              "x-amz-target":"AWSStepFunctions.StartSyncExecution"
+            },
+            "body": {
+              "stateMachineArn": "${GetPracticeStateMachine}",
+              "input": "{ \"id\": $util.escapeJavaScript($util.toJson($ctx.args.app.id)), \"sort\": $util.escapeJavaScript($util.toJson($ctx.args.app.sort))}"
+            }
+          }
+        }
+      ResponseMappingTemplate: $util.parseJson($ctx.result.body).output
+      #ResponseMappingTemplate: $ctx.result.body
 
-
+        # {
+        #   "dni": $util.toJson($ctx.result.body.output['dni']),
+        #   "name": $util.toJson($ctx.result.body.output['name']),
+        #   "age": $util.toJson($ctx.result.body.output['age'])
+        # }
+  GetPracticeStateMachine:
+    Type: AWS::Serverless::StateMachine
+    Properties:
+      DefinitionUri: statemachines/getPractice.asl.json
+      Type: EXPRESS
+      DefinitionSubstitutions:
+        GetPracticeFunctionArn : !GetAtt GetPracticeFunction.Arn
+      Logging:
+        Destinations:
+          - CloudWatchLogsLogGroup:
+              LogGroupArn: !GetAtt CreateSettingsLogs.Arn
+        IncludeExecutionData: true
+        Level: ALL  
+      Policies: 
+        - LambdaInvokePolicy:
+            FunctionName: !Ref GetPracticeFunction
+            
+        - CloudWatchLogsFullAccess
 
 
   ###############      
