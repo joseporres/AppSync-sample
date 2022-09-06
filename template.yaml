@@ -7,7 +7,16 @@ Parameters:
   SENDER:
     Description: Ambiente despliegue
     Type: String
-    Default: jose.porres@devmente.com  
+    Default: jose.porres@devmente.com
+  Stage:
+    Description: Ambiente despliegue
+    Type: String
+    Default: dev
+    AllowedValues:       
+      - stg
+      - prd 
+      - dev
+      - qa
 
 Resources:
  ###################
@@ -188,7 +197,9 @@ Resources:
               TableName: !Ref DynamoSettingTableSample
       Environment:
         Variables:
-          TABLENAME: !Ref DynamoSettingTableSample 
+          TABLA_NAME: !Ref DynamoSettingTableSample 
+          Stage: !Ref Stage
+
   
 
   StoreSettingsResolver:
@@ -390,6 +401,14 @@ Resources:
             - AttributeName: email
               KeyType: HASH
             - AttributeName: sort
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+        - IndexName: list-users
+          KeySchema:
+            - AttributeName: sort
+              KeyType: HASH
+            - AttributeName: id
               KeyType: RANGE
           Projection:
             ProjectionType: ALL
