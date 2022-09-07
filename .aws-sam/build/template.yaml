@@ -8,6 +8,15 @@ Parameters:
     Description: Ambiente despliegue
     Type: String
     Default: jose.porres@devmente.com
+  Stage:
+    Description: Ambiente despliegue
+    Type: String
+    Default: dev
+    AllowedValues:
+    - stg
+    - prd
+    - dev
+    - qa
 Resources:
   AppSyncServiceRole:
     Type: AWS::IAM::Role
@@ -207,8 +216,10 @@ Resources:
             Ref: DynamoSettingTableSample
       Environment:
         Variables:
-          TABLENAME:
+          TABLA_NAME:
             Ref: DynamoSettingTableSample
+          Stage:
+            Ref: Stage
       CodeUri: CreateAppsProcessFunction
   StoreSettingsResolver:
     Type: AWS::AppSync::Resolver
@@ -361,6 +372,14 @@ Resources:
         - AttributeName: email
           KeyType: HASH
         - AttributeName: sort
+          KeyType: RANGE
+        Projection:
+          ProjectionType: ALL
+      - IndexName: list-users
+        KeySchema:
+        - AttributeName: sort
+          KeyType: HASH
+        - AttributeName: id
           KeyType: RANGE
         Projection:
           ProjectionType: ALL
