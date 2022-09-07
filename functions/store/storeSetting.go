@@ -2,14 +2,13 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"os"
+	"strconv"
 
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
-	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
 )
 
 
@@ -109,61 +108,192 @@ func handler(ctx context.Context, event Event) (string, error) {
 	}
 
 	svc := dynamodb.New(sess)
-	in := UserInput{ 
-		Id: event.Settings.Email,
-		Sort: "SETTINGS",
-		Name: event.Settings.Name,
-		DocType: event.Settings.DocType,
-		Dni: event.Settings.Dni,
-		Gender: event.Settings.Gender,
-		BirthDate: event.Settings.BirthDate,
-		CountryOfBirth: event.Settings.CountryOfBirth,
-		PersonalEmail: event.Settings.PersonalEmail,
-		MaritalStatus: event.Settings.MaritalStatus,
-		PersonalPhone: event.Settings.PersonalPhone,
-		CountryOfResidence: event.Settings.CountryOfResidence,
-		ResidenceDepartment: event.Settings.ResidenceDepartment,
-		Address: event.Settings.Address,
-		Area: event.Settings.Area,
-		SubArea: event.Settings.SubArea,
-		WorkerType: event.Settings.WorkerType,
-		Email: event.Settings.Email,
-		EntryDate: event.Settings.EntryDate,
-		Phone: event.Settings.Phone,
-		Apps: event.Settings.Apps,
-		Menu: event.Settings.Menu,
-		Processes: event.Settings.Processes,
-		UserType: event.Settings.UserType,
-		UserState: "UNCONFIRMED",
-		Role: event.Settings.Role,
-		Days: event.Settings.Days,
-		HomeOffice: event.Settings.HomeOffice,
-		Photo: event.Settings.Photo,
-		Boss: event.Settings.Boss,
-		BossName: event.Settings.BossName,
-		User: event.Settings.User,
-		Backup: event.Settings.Backup,
-		BackupName: event.Settings.BackupName,
+
+	var appsArr []*dynamodb.AttributeValue
+	var menuArr []*dynamodb.AttributeValue
+	var processesArr []*dynamodb.AttributeValue
+
+	for _, app := range event.Settings.Apps {
+		attr := &dynamodb.AttributeValue{
+			M: map[string]*dynamodb.AttributeValue{
+				"title": {
+					S: aws.String(app.Title),
+				},
+				"url": {
+					S: aws.String(app.Url),
+				},
+				"icon": {
+					S: aws.String(app.Icon),
+				},
+				"active": {
+					BOOL: aws.Bool(app.Active),
+				},
+			},
+		}
+		appsArr = append(appsArr, attr)
 	}
 
-	fmt.Println("Evento: ", event)
-
-
-	fmt.Println("In: ", in)
-
-	item, err := dynamodbattribute.MarshalMap(in)
-	if err != nil {
-		return "", err
+	for _, menu := range event.Settings.Menu {
+		attr := &dynamodb.AttributeValue{
+			M: map[string]*dynamodb.AttributeValue{
+				"title": {
+					S: aws.String(menu.Title),
+				},
+				"url": {
+					S: aws.String(menu.Url),
+				},
+				"icon": {
+					S: aws.String(menu.Icon),
+				},
+				"active": {
+					BOOL: aws.Bool(menu.Active),
+				},
+			},
+		}
+		menuArr = append(menuArr, attr)
 	}
 
-	fmt.Println("Marshall: ",item)
+	for _, process := range event.Settings.Processes {
+		attr := &dynamodb.AttributeValue{
+			M: map[string]*dynamodb.AttributeValue{
+				"title": {
+					S: aws.String(process.Title),
+				},
+				"url": {
+					S: aws.String(process.Url),
+				},
+				"icon": {
+					S: aws.String(process.Icon),
+				},
+				"active": {
+					BOOL: aws.Bool(process.Active),
+				},
+			},
+		}
+		processesArr = append(processesArr, attr)
+	}
 
-	input := &dynamodb.PutItemInput{
-		Item: item,
+
+
+	input :=  &dynamodb.UpdateItemInput{
+		ExpressionAttributeValues: map[string]*dynamodb.AttributeValue{
+			":name": {
+				S: aws.String(event.Settings.Name),
+			},
+			":docType": {
+				S: aws.String(event.Settings.DocType),
+			},
+			":dni": {
+				S: aws.String(event.Settings.Dni),
+			},
+			":gender": {
+				S: aws.String(event.Settings.Gender),
+			},
+			":birthDate": {
+				S: aws.String(event.Settings.BirthDate),
+			},
+			":countryOfBirth": {
+				S: aws.String(event.Settings.CountryOfBirth),
+			},
+			":personalEmail": {
+				S: aws.String(event.Settings.PersonalEmail),
+			},
+			":maritalStatus": {
+				S: aws.String(event.Settings.MaritalStatus),
+			},
+			":personalPhone": {
+				S: aws.String(event.Settings.PersonalPhone),
+			},
+			":countryOfResidence": {
+				S: aws.String(event.Settings.CountryOfResidence),
+			},
+			":residenceDepartment": {
+				S: aws.String(event.Settings.ResidenceDepartment),
+			},
+			":address": {
+				S: aws.String(event.Settings.Address),
+			},
+			":area": {
+				S: aws.String(event.Settings.Area),
+			},
+			":subArea": {
+				S: aws.String(event.Settings.SubArea),
+			},
+			":workerType": {
+				S: aws.String(event.Settings.WorkerType),
+			},
+			":email": {
+				S: aws.String(event.Settings.Email),
+			},
+			":entryDate": {
+				S: aws.String(event.Settings.EntryDate),
+			},
+			":phone": {
+				S: aws.String(event.Settings.Phone),
+			},
+			":apps": {
+				L: appsArr,
+			},
+			":menu": {
+				L: menuArr,
+			},
+			":processes": {
+				L: processesArr,
+			},
+			":userType": {
+				S: aws.String(event.Settings.UserType),
+			},
+			":userState": {
+				S: aws.String("UNCONFIRMED"),
+			},
+			":role": {
+				S: aws.String(event.Settings.Role),
+			},
+			":days": {
+				N: aws.String(strconv.Itoa(event.Settings.Days)),
+			},
+			":homeOffice": {
+				N: aws.String(strconv.Itoa(event.Settings.HomeOffice)),
+			},
+			":photo": {
+				S: aws.String(event.Settings.Photo),
+			},
+			":boss": {
+				S: aws.String(event.Settings.Boss),
+			},
+			":bossName": {
+				S: aws.String(event.Settings.BossName),
+			},
+			":user": {
+				S: aws.String(event.Settings.User),
+			},
+			":backup": {
+				S: aws.String(event.Settings.Backup),
+			},
+			":backupName": {
+				S: aws.String(event.Settings.BackupName),
+			},
+		},
+		ExpressionAttributeNames: map[string]*string{
+			"#name": aws.String("name"),
+			"#role": aws.String("role"),
+			"#user": aws.String("user"),
+			"#backup": aws.String("backup"),
+		},
 		TableName: aws.String(TABLE_NAME),
+		Key: map[string]*dynamodb.AttributeValue{
+			"id": {
+				S: aws.String(event.Settings.Email),
+			},
+			"sort": {
+				S: aws.String("SETTINGS"),
+			},
+		},
+		ReturnValues:     aws.String("UPDATED_NEW"),
+		UpdateExpression: aws.String("SET #name = :name, docType = :docType, dni = :dni, gender = :gender, birthDate = :birthDate, countryOfBirth = :countryOfBirth, personalEmail = :personalEmail, maritalStatus = :maritalStatus, personalPhone = :personalPhone, countryOfResidence = :countryOfResidence, residenceDepartment = :residenceDepartment, address = :address, area = :area, subArea = :subArea, workerType = :workerType, email = :email, entryDate = :entryDate, phone = :phone, apps = :apps, menu = :menu, processes = :processes, userType = :userType, userState = :userState, #role = :role, days = :days, homeOffice = :homeOffice, photo = :photo, boss = :boss, bossName = :bossName, #user = :user, #backup = :backup, backupName = :backupName"),
 	}
+	_, err = svc.UpdateItem(input)
 
-	_, err = svc.PutItem(input)
 	if err != nil {
 		return "", err
 	}
