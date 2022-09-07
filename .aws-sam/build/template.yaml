@@ -41,6 +41,7 @@ Resources:
             Resource:
             - Ref: StoreSettingsStateMachine
             - Ref: GetPracticeStateMachine
+            - Ref: PutUpdatePracticeStateMachine
           - Effect: Allow
             Action:
             - dynamodb:GetItem
@@ -392,6 +393,70 @@ Resources:
       - LambdaInvokePolicy:
           FunctionName:
             Ref: GetPracticeFunction
+      - CloudWatchLogsFullAccess
+  PutUpdatePracticeResolver:
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId:
+        Fn::GetAtt:
+        - AppSyncApi
+        - ApiId
+      TypeName: Mutation
+      FieldName: putUpdatePractice
+      DataSourceName:
+        Fn::GetAtt:
+        - StepFunctionsHttpDataSource
+        - Name
+      RequestMappingTemplate:
+        Fn::Sub: "{\n  \"version\": \"2018-05-29\",\n  \"method\": \"POST\",\n  \"\
+          resourcePath\": \"/\",\n  \"params\": {\n    \"headers\": {\n      \"content-type\"\
+          : \"application/x-amz-json-1.0\",\n      \"x-amz-target\":\"AWSStepFunctions.StartSyncExecution\"\
+          \n    },\n    \"body\": {\n      \"stateMachineArn\": \"${PutUpdatePracticeStateMachine}\"\
+          ,\n      \"input\": \"{ \\\"id\\\": $util.escapeJavaScript($util.toJson($ctx.args.id)),\
+          \ \\\"sort\\\": $util.escapeJavaScript($util.toJson($ctx.args.sort)), \\\
+          \"nombre\\\": $util.escapeJavaScript($util.toJson($ctx.args.nombre))}\"\n\
+          \    }\n  }\n}\n"
+      ResponseMappingTemplate: $ctx.result.body
+  PutUpdatePracticeFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: makefile
+      SamResourceId: PutUpdatePracticeFunction
+    Properties:
+      Handler: handler
+      Runtime: go1.x
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName:
+            Ref: DynamoSettingTableSample
+      Environment:
+        Variables:
+          TABLENAME:
+            Ref: DynamoSettingTableSample
+      CodeUri: PutUpdatePracticeFunction
+  PutUpdatePracticeStateMachine:
+    Type: AWS::Serverless::StateMachine
+    Properties:
+      DefinitionUri: ../../statemachines/putUpdatePractice.asl.json
+      Type: EXPRESS
+      DefinitionSubstitutions:
+        PutUpdatePracticeFunctionArn:
+          Fn::GetAtt:
+          - PutUpdatePracticeFunction
+          - Arn
+      Logging:
+        Destinations:
+        - CloudWatchLogsLogGroup:
+            LogGroupArn:
+              Fn::GetAtt:
+              - CreateSettingsLogs
+              - Arn
+        IncludeExecutionData: true
+        Level: ALL
+      Policies:
+      - LambdaInvokePolicy:
+          FunctionName:
+            Ref: PutUpdatePracticeFunction
       - CloudWatchLogsFullAccess
   CreateSettingsLogs:
     Type: AWS::Logs::LogGroup

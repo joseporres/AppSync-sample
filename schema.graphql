@@ -197,5 +197,6 @@ type Query {
 
 
 type Mutation{
-    storeSettings(settings: SettingsOBInput!): Execution, 
+    putUpdatePractice(id: String, sort: String, nombre: String): Execution
+    storeSettings(settings: SettingsOBInput!): Execution
 }

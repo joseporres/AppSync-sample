@@ -18,3 +18,6 @@ build-CreateAppsProcessFunction:
 
 build-GetPracticeFunction:
 	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o $(ARTIFACTS_DIR)/handler functions/getApp/getApp.go
+
+build-PutUpdatePracticeFunction:
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o $(ARTIFACTS_DIR)/handler functions/practice_put_update/main.go

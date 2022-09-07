@@ -1,0 +1,17 @@
+{
+    "Comment": "Put and Update Practice",
+    "StartAt": "Put And Update",
+    "States": {
+        "Put And Update" : {
+            "Type": "Task",
+            "Resource": "${PutUpdatePracticeFunctionArn}",
+            "Parameters": {
+                "id": "$$.Execution.Input.sort",
+                "sort.$": "$$.Execution.Input.sort",
+                "nombre.$": "$$.Execution.Input.nombre"
+            },
+            "End": true
+        }
+    }
+
+}
