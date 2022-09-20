@@ -49,6 +49,35 @@ Resources:
                   Fn::GetAtt:
                   - DynamoSettingTableSample
                   - Arn
+  UserPoolTest:
+    Type: AWS::Cognito::UserPool
+    Description: A Cognito user pool for authenticating users
+    Properties:
+      UserPoolName: pool_test
+      UsernameAttributes:
+      - email
+      MfaConfiguration: 'OFF'
+      Schema:
+      - Name: email
+        AttributeDataType: String
+        Mutable: true
+        Required: false
+      - Name: name
+        AttributeDataType: String
+        Mutable: true
+        Required: false
+      - Name: nombre
+        AttributeDataType: String
+        Mutable: true
+        Required: false
+  UserPoolClientTest:
+    Type: AWS::Cognito::UserPoolClient
+    Description: App Client used by AWS AppSync
+    Properties:
+      ClientName: ofvi-appsync-client-test
+      GenerateSecret: false
+      UserPoolId:
+        Ref: UserPoolTest
   AppSyncApi:
     DependsOn: AppSyncServiceRole
     Type: AWS::AppSync::GraphQLApi
@@ -147,9 +176,48 @@ Resources:
             Ref: DynamoSettingTableSample
       Environment:
         Variables:
-          SETTINGS_TABLE:
+          TableName:
             Ref: DynamoSettingTableSample
       CodeUri: StoreSettingsFunction
+  UpdateForceStatus:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: makefile
+      SamResourceId: UpdateForceStatus
+    Properties:
+      Handler: handler
+      Runtime: go1.x
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName:
+            Ref: DynamoSettingTableSample
+      Environment:
+        Variables:
+          TableName:
+            Ref: DynamoSettingTableSample
+      CodeUri: UpdateForceStatus
+  SendTemporalPassword:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: makefile
+      SamResourceId: SendTemporalPassword
+    Properties:
+      Handler: handler
+      Runtime: go1.x
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName:
+            Ref: DynamoSettingTableSample
+      - S3ReadPolicy:
+          BucketName:
+            Ref: TemplateBucket
+      Environment:
+        Variables:
+          TableName:
+            Ref: DynamoSettingTableSample
+          BucketName:
+            Ref: TemplateBucket
+      CodeUri: SendTemporalPassword
   GetInvitationTemplateFunction:
     Type: AWS::Serverless::Function
     Metadata:

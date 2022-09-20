@@ -17,7 +17,7 @@
             "Parameters": {
                 "email.$": "$$.Execution.Input.email",
                 "name.$": "$$.Execution.Input.name",
-                "HTMLBody.$": "$"
+                "HTMLTemplate.$": "$"
             },
             "End": true
         }
