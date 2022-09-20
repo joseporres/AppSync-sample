@@ -36,8 +36,8 @@ func handler(ctx context.Context, event Event) (*cognito.AdminSetUserPasswordOut
 
 	client := awsCognitoClient{
 		cognitoClient: svc,
-		appClientId:   "higbi45rjdihep9q4hujecbhg",
-		userPoolId:    "us-east-1_Ruo06OeXI",
+		appClientId:   "4m0fh965du3rhl0cvgtova3p3l",
+		userPoolId:    "us-east-1_uBHINArtY",
 	}
 
 	res,err :=client.cognitoClient.AdminSetUserPassword(&cognito.AdminSetUserPasswordInput{

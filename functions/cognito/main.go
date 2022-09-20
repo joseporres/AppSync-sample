@@ -45,7 +45,7 @@ func (d *deps) handler(ctx context.Context, event Event) (string, error) {
 	client := awsCognitoClient{
 		cognitoClient: svc,
 		appClientId:   "higbi45rjdihep9q4hujecbhg",
-		userPoolId:    "us-east-1_Ruo06OeXI",
+		userPoolId:    "us-east-1_uBHINArtY",
 	}
 	fmt.Printf("Email :%s Password: %s \n", event.Email, event.Password)
 	fmt.Println("cliente: ", client)
