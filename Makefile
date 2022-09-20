@@ -22,5 +22,8 @@ build-UpdateForceStatus:
 build-SendTemporalPassword:
 	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o $(ARTIFACTS_DIR)/handler functions/send_temporal_password/main.go
 
+build-GetUserFunction:
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o $(ARTIFACTS_DIR)/handler functions/get-user/main.go
+
 
 

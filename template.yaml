@@ -139,6 +139,7 @@ Resources:
         TableName: !Ref DynamoSettingTableSample
         AwsRegion: !Sub ${AWS::Region}
   
+  
   CheckEmailUserTypeFunction:
     Type: AWS::Serverless::Function
     Metadata:
@@ -170,6 +171,20 @@ Resources:
           TableName: !Ref DynamoSettingTableSample
 
   UpdateForceStatus:         
+    Type: 'AWS::Serverless::Function'
+    Metadata:
+      BuildMethod: makefile
+    Properties:
+      Handler: handler
+      Runtime: go1.x
+      Policies: 
+          - DynamoDBCrudPolicy:
+              TableName: !Ref DynamoSettingTableSample
+      Environment:
+        Variables:
+          TableName: !Ref DynamoSettingTableSample
+
+  GetUserFunction:         
     Type: 'AWS::Serverless::Function'
     Metadata:
       BuildMethod: makefile
