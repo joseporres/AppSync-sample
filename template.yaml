@@ -159,10 +159,10 @@ Resources:
             SigningServiceName: states
 
    # AppSync Data Source for DynamoDB Settings
-  AppSyncDynamoSettingsTableDataSource:
+  DDBDataSource:
     Type: AWS::AppSync::DataSource
     Properties:
-      Name: SettingsTableDataSource
+      Name: SettingsTableDataSource2
       ApiId: !GetAtt AppSyncApi.ApiId
       Description: "Settings table data source"
       Type: AMAZON_DYNAMODB
@@ -437,7 +437,31 @@ Resources:
             UserPool: !Ref UserPool
             Trigger: CustomMessage
 
-  
+  UpdateUserStatusResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn: AppSyncSchema
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      TypeName: Mutation
+      FieldName: activeUserStatus
+      DataSourceName: !GetAtt DDBDataSource.Name
+      RequestMappingTemplate: >
+        {
+            "version" : "2018-05-29",
+            "operation" : "UpdateItem",
+            "key" : {
+                "id" : $util.dynamodb.toDynamoDBJson($ctx.args.username),
+                "sort" : $util.dynamodb.toDynamoDBJson("SETTINGS")
+            },
+            "update" : {
+              "expression" : "set userStatus = :userStatus",
+              "expressionValues" : {
+                ":userStatus": $utils.dynamodb.toDynamoDBJson("ACTIVE")
+              }
+            }
+        }
+      ResponseMappingTemplate: $util.toJson($ctx.result) 
+
 
   ###############      
   ## LOGS      ##
