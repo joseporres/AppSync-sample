@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"strings"
 	"time"
@@ -66,6 +67,7 @@ type UserObject struct {
 
 type Event struct {
 	Settings UserObject `json:"settings"`
+	CognitoId string `json:"cognitoId"`
 }
 
 func (d *deps) handler(ctx context.Context, event Event) (string, error) {
@@ -73,8 +75,18 @@ func (d *deps) handler(ctx context.Context, event Event) (string, error) {
 	timeNow := time.Now()
 	now := strings.Split(timeNow.Format(time.RFC3339), "Z")[0] + "Z"
 
+	var idVar string
+	//var userStatusVar string
+	if event.Settings.UserType == "Usuario Externo" {
+		idVar = event.CognitoId	
+	} else {
+		idVar = event.Settings.Email
+	}
+	fmt.Println("Muerte 1")
+
+
 	in := UserObject{
-		Id:                  event.Settings.Email,
+		Id:                  idVar,
 		Sort:                "SETTINGS",
 		Name:                event.Settings.Name,
 		DocType:             event.Settings.DocType,
@@ -110,16 +122,24 @@ func (d *deps) handler(ctx context.Context, event Event) (string, error) {
 		Backup:              "",
 		BackupName:          "",
 	}
+	fmt.Println("Muerte 2")
+
 
 	item, err := MarshalMap(in)
 	if err != nil {
 		return "", err
 	}
 
+	fmt.Println("Muerte 3")
+
+
 	input := &dynamodb.PutItemInput{
 		Item:      item,
 		TableName: aws.String(TABLE_NAME),
 	}
+
+	fmt.Println("Muerte 4")
+
 
 	_, err = d.ddb.PutItem(input)
 	if err != nil {
@@ -133,7 +153,7 @@ func main() {
 	sess := session.Must(session.NewSession(&aws.Config{Region: aws.String(os.Getenv("REGION"))}))
 	d := deps{
 		ddb:   dynamodb.New(sess),
-		table: os.Getenv("TABLE_NAME"),
+		table: os.Getenv("TableName"),
 	}
 
 	lambda.Start(d.handler)

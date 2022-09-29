@@ -25,5 +25,10 @@ build-SendTemporalPassword:
 build-GetUserFunction:
 	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o $(ARTIFACTS_DIR)/handler functions/get-user/main.go
 
+build-CreateCognitoUserFunction:
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o $(ARTIFACTS_DIR)/ofvi-create-cognito-user functions/create-cognito-user/main.go
+
+build-SendEmailFunction:
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o $(ARTIFACTS_DIR)/ofvi-send-email functions/send-mail/main.go
 
 

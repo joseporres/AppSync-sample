@@ -176,5 +176,5 @@ type Query {
 
 
 type Mutation{
-    storeSettings(settings: SettingsOBInput!): Execution, 
+    storeSettings(settings: SettingsOBInput!): Execution,
 }

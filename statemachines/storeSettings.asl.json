@@ -50,17 +50,50 @@
             "Choices": [
                 {
                     "Variable": "$",
-                    "NumericEquals": 0,
-                    "Next": "Create User"
+                    "NumericGreaterThan": 0,
+                    "Next": "Error User Exist"
                 }
             ],
-            "Default": "Error User Exist"
+            "Default": "External User?"
         },
-        "Create User": {
+        "External User?":{
+            "Type": "Choice",
+            "Choices": [
+                {
+                    "Variable": "$$.Execution.Input.settings.userType",
+                    "StringEquals": "Usuario Externo",
+                    "Next": "Create External User"
+                }
+            ],
+            "Default": "Create User Protecta"
+        },
+        "Create External User":{
+            "Type": "Task",
+            "Resource": "${CreateCognitoUserFunctionArn}",
+            "Parameters": {
+                "email.$": "$$.Execution.Input.settings.email",
+                "name.$": "$$.Execution.Input.settings.name"
+            },
+            "ResultPath": "$",
+            "Next": "Create User Dynamo"
+
+        },
+        "Create User Dynamo": {
             "Type": "Task",
             "Resource": "${StoreSettingsFunctionArn}",
             "Parameters": {
-                "settings.$" : "$$.Execution.Input.settings"
+                "settings.$" : "$$.Execution.Input.settings",
+                "cognitoId.$": "$"
+            },
+            "ResultPath": null,
+            "Next": "Access Granted"
+        }, 
+        "Create User Protecta": {
+            "Type": "Task",
+            "Resource": "${StoreSettingsFunctionArn}",
+            "Parameters": {
+                "settings.$" : "$$.Execution.Input.settings",
+                "cognitoId" : ""
             },
             "ResultPath": null,
             "Next": "Get and Send Invitation"

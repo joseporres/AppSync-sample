@@ -6,6 +6,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	cognito "github.com/aws/aws-sdk-go/service/cognitoidentityprovider"
@@ -77,4 +78,8 @@ func handler(ctx context.Context, event Event) ([]Response, error) {
 
 
 
+}
+
+func main() {
+	lambda.Start(handler)
 }

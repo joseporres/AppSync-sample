@@ -8,7 +8,7 @@ make: *** No rule to make target 'all'.  Stop.
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
 
-# Make data base, printed on Tue Sep 20 09:36:46 2022
+# Make data base, printed on Thu Sep 29 11:22:38 2022
 
 # Variables
 
@@ -16,8 +16,6 @@ make: *** No rule to make target 'all'.  Stop.
 GDK_BACKEND = x11
 # environment
 LC_ALL = C
-# environment
-NO_AT_BRIDGE = 1
 # environment
 GNOME_SHELL_SESSION_MODE = ubuntu
 # environment
@@ -61,11 +59,13 @@ LSCOLORS = Gxfxcxdxbxegedabagacad
 # environment
 XDG_DATA_DIRS = /usr/share/ubuntu:/usr/share/gnome:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop
 # environment
-OLDPWD = /home/josedevmente/Documents
+OLDPWD = /home/josedevmente/Documents/aws_sam
 # automatic
 ^D = $(patsubst %/,%,$(dir $^))
 # automatic
 %F = $(notdir $%)
+# environment
+CONDA_PROMPT_MODIFIER = 
 # environment
 VSCODE_CODE_CACHE_PATH = /home/josedevmente/.config/Code/CachedData/74b1f979648cc44d385a2286793c226e611f59e7
 # environment
@@ -77,7 +77,7 @@ XAUTHORITY = /run/user/1000/gdm/Xauthority
 # default
 .INCLUDE_DIRS = /usr/local/include /usr/include /usr/include
 # environment
-GNOME_TERMINAL_SERVICE = :1.95
+GNOME_TERMINAL_SERVICE = :1.99
 # makefile
 MAKEFLAGS = pqrR
 # makefile
@@ -103,19 +103,23 @@ XDG_SESSION_DESKTOP = ubuntu
 # makefile (from 'Makefile', line 1)
 MAKEFILE_LIST := Makefile
 # environment
+CONDA_SHLVL = 1
+# environment
 SNAP_REEXEC = 
 # automatic
 @F = $(notdir $@)
 # environment
 ZSH = /home/josedevmente/.oh-my-zsh
 # environment
-VSCODE_PID = 3240
+VSCODE_PID = 7210
 # environment
 XDG_SESSION_TYPE = x11
 # automatic
 ?D = $(patsubst %/,%,$(dir $?))
 # environment
-SESSION_MANAGER = local/joseDevmente:@/tmp/.ICE-unix/1228,unix/joseDevmente:/tmp/.ICE-unix/1228
+CONDA_PYTHON_EXE = /home/josedevmente/anaconda3/bin/python
+# environment
+SESSION_MANAGER = local/joseDevmente:@/tmp/.ICE-unix/1199,unix/joseDevmente:/tmp/.ICE-unix/1199
 # automatic
 *F = $(notdir $*)
 # environment
@@ -132,6 +136,8 @@ VSCODE_NLS_CONFIG = {"locale":"en-us","availableLanguages":{},"_languagePackSupp
 MAKE_HOST := x86_64-pc-linux-gnu
 # environment
 GNOME_DESKTOP_SESSION_ID = this-is-deprecated
+# environment
+CONDA_PREFIX = /home/josedevmente/anaconda3
 # makefile
 SHELL = /bin/sh
 # default
@@ -141,7 +147,7 @@ XMODIFIERS = @im=ibus
 # environment
 SHLVL = 1
 # environment
-GNOME_TERMINAL_SCREEN = /org/gnome/Terminal/screen/b510b4d9_4835_407e_bb25_cb9caa43f1f2
+GNOME_TERMINAL_SCREEN = /org/gnome/Terminal/screen/9e440f43_ca0a_43c5_aed2_6db5122abf00
 # environment
 MAKELEVEL := 0
 # default
@@ -149,7 +155,7 @@ MAKE = $(MAKE_COMMAND)
 # environment
 SNAP_COOKIE = El7ilc_S_C45ohgYyla2ojI97CDABdMzTTY0r62ohH2rZPx0iKnD
 # environment
-PATH = /home/josedevmente/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin
+PATH = /home/josedevmente/anaconda3/bin:/home/josedevmente/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin
 # default
 MAKEFILES := 
 # environment
@@ -187,13 +193,15 @@ ORIGINAL_XDG_CURRENT_DESKTOP = ubuntu:GNOME
 # 'override' directive
 GNUMAKEFLAGS := 
 # environment
+CONDA_DEFAULT_ENV = base
+# environment
 LOGNAME = josedevmente
 # environment
 SNAP_ARCH = amd64
 # makefile
 .DEFAULT_GOAL := build-StoreSettingsFunction
 # environment
-SYSTEMD_EXEC_PID = 1249
+SYSTEMD_EXEC_PID = 3489
 # environment
 DISPLAY = :0
 # environment
@@ -253,7 +261,7 @@ SNAP_VERSION = 74b1f979
 # default
 SUFFIXES := 
 # environment
-_P9K_TTY = /dev/pts/0
+_P9K_TTY = /dev/pts/1
 # environment
 VSCODE_CLI = 1
 # environment
@@ -269,13 +277,15 @@ SNAP_USER_DATA = /home/josedevmente/snap/code/108
 # environment
 XDG_MENU_PREFIX = gnome-
 # environment
+CONDA_EXE = /home/josedevmente/anaconda3/bin/conda
+# environment
 GDMSESSION = ubuntu
 # environment
 LC_IDENTIFICATION = agr_PE
 # environment
 SNAP_LIBRARY_PATH = /var/lib/snapd/lib/gl:/var/lib/snapd/lib/gl32:/var/lib/snapd/void
 # variable set hash-table stats:
-# Load=131/1024=13%, Rehash=0, Collisions=12/161=7%
+# Load=136/1024=13%, Rehash=0, Collisions=13/166=8%
 
 # Pattern-specific Variable Values
 
@@ -283,6 +293,7 @@ SNAP_LIBRARY_PATH = /var/lib/snapd/lib/gl:/var/lib/snapd/lib/gl32:/var/lib/snapd
 
 # Directories
 
+ 
 # . (device 66306, inode 14157244): 14 files, no impossibilities.
 
 # 14 files, no impossibilities in 1 directories.
@@ -301,6 +312,13 @@ build-GetInvitationTemplateFunction:
 	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o $(ARTIFACTS_DIR)/handler functions/get-template-email/getInvitationTemplate.go
 	
 
+build-GetUserFunction:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (from 'Makefile', line 26):
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o $(ARTIFACTS_DIR)/handler functions/get-user/main.go
+
 build-SendTemporalPassword:
 #  Implicit rule search has not been done.
 #  Modification time never checked.
@@ -311,10 +329,16 @@ build-SendTemporalPassword:
 # Not a target:
 Makefile:
 #  Implicit rule search has been done.
- 
-#  Last modified 2022-09-19 15:49:46.256227265
+#  Last modified 2022-09-26 18:45:47.47905332
 #  File has been updated.
 #  Successfully updated.
+
+build-CreateCognitoUserFunction:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (from 'Makefile', line 29):
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o $(ARTIFACTS_DIR)/ofvi-create-cognito-user functions/create-cognito-user/main.go
 
 build-SendInvitationFunction:
 #  Implicit rule search has not been done.
@@ -368,6 +392,13 @@ build-UpdateForceStatus:
 #  Modification time never checked.
 #  File has not been updated.
 
+build-SendEmailFunction:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (from 'Makefile', line 32):
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o $(ARTIFACTS_DIR)/ofvi-send-email functions/send-mail/main.go
+
 build-CreateAppsProcessFunction:
 #  Implicit rule search has not been done.
 #  Modification time never checked.
@@ -377,19 +408,19 @@ build-CreateAppsProcessFunction:
 	
 
 # files hash-table stats:
-# Load=13/1024=1%, Rehash=0, Collisions=0/24=0%
+# Load=16/1024=2%, Rehash=0, Collisions=0/27=0%
 # VPATH Search Paths
 
 # No 'vpath' search paths.
 
 # No general ('VPATH' variable) search path.
 
-# strcache buffers: 1 (0) / strings = 28 / storage = 405 B / avg = 14 B
-# current buf: size = 8162 B / used = 405 B / count = 28 / avg = 14 B
+# strcache buffers: 1 (0) / strings = 31 / storage = 483 B / avg = 15 B
+# current buf: size = 8162 B / used = 483 B / count = 31 / avg = 15 B
 
-# strcache performance: lookups = 40 / hit rate = 30%
+# strcache performance: lookups = 46 / hit rate = 32%
 # hash-table stats:
-# Load=28/8192=0%, Rehash=0, Collisions=0/40=0%
-# Finished Make data base on Tue Sep 20 09:36:46 2022
+# Load=31/8192=0%, Rehash=0, Collisions=0/46=0%
+# Finished Make data base on Thu Sep 29 11:22:38 2022
 
  

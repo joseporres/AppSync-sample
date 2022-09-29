@@ -54,14 +54,14 @@ Resources:
               #   Resource: 
               #     - !GetAtt PlusTenFunction.Arn
   
-  UserPoolTest:
+  UserPool:
     Type: "AWS::Cognito::UserPool"
     Description: "A Cognito user pool for authenticating users"
     Properties:
-      UserPoolName: pool_test
+      UserPoolName: user-pool
       UsernameAttributes: [email]
-      # AutoVerifiedAttributes:
-      #   - phone_number
+      AutoVerifiedAttributes:
+      - email
       MfaConfiguration: "OFF"
       Schema:
         - Name: email
@@ -72,7 +72,11 @@ Resources:
           AttributeDataType: String
           Mutable: true
           Required: false
-        - Name: nombre
+        - Name: given_name
+          AttributeDataType: String
+          Mutable: true
+          Required: false
+        - Name: family_name
           AttributeDataType: String
           Mutable: true
           Required: false
@@ -81,10 +85,38 @@ Resources:
     Type: "AWS::Cognito::UserPoolClient"
     Description: "App Client used by AWS AppSync"
     Properties:
-      ClientName: ofvi-appsync-client-test
+      ClientName: appsync-client
       GenerateSecret: false
-      UserPoolId: !Ref UserPoolTest
-
+      UserPoolId: !Ref UserPool
+      ExplicitAuthFlows:
+        - ALLOW_REFRESH_TOKEN_AUTH
+        - ALLOW_USER_SRP_AUTH
+        - ALLOW_CUSTOM_AUTH
+        - ALLOW_USER_PASSWORD_AUTH
+        - ALLOW_ADMIN_USER_PASSWORD_AUTH
+  
+ # Cognito
+  SNSRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - cognito-idp.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Policies:
+        - PolicyName: DDBAccess
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action: 
+                  - sns:publish
+                Resource: "*"
       
   AppSyncApi:
     DependsOn: AppSyncServiceRole
@@ -214,11 +246,6 @@ Resources:
         Variables:
           TableName: !Ref DynamoSettingTableSample
           BucketName: !Ref TemplateBucket
-
-  
-  
-
-
   
   GetInvitationTemplateFunction:
     Type: 'AWS::Serverless::Function'
@@ -311,6 +338,7 @@ Resources:
         GetInvitationTemplateFunctionArn : !GetAtt GetInvitationTemplateFunction.Arn
         SendInvitationFunctionArn : !GetAtt SendInvitationFunction.Arn
         GetAndSendInvitationStateMachineArn: !GetAtt GetAndSendInvitationStateMachine.Arn
+        CreateCognitoUserFunctionArn: !GetAtt CreateCognitoUserFunction.Arn
         TableName: !Ref DynamoSettingTableSample
       Logging:
         Destinations:
@@ -327,6 +355,10 @@ Resources:
             StateMachineName: !GetAtt GetAndSendInvitationStateMachine.Name
         - LambdaInvokePolicy:
             FunctionName: !Ref CheckEmailUserTypeFunction
+        - LambdaInvokePolicy:
+            FunctionName: !Ref CreateCognitoUserFunction
+        - LambdaInvokePolicy:
+            FunctionName: !Ref SendEmailFunction
             
         - CloudWatchLogsFullAccess
 
@@ -353,8 +385,59 @@ Resources:
         - CloudWatchLogsFullAccess
 
 
+  CreateCognitoUserFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: makefile
+    Properties:
+      Handler: ofvi-create-cognito-user
+      Runtime: go1.x
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - DynamoDBCrudPolicy:
+            TableName: !Ref BDOfficios
+      Environment:
+        Variables:
+          USER_POOL_ID: !Ref UserPool
+          APP_CLIENT_ID: !Ref UserPoolClientTest
+      Policies:
+        - Statement:
+          - Sid: CognitoPolicy
+            Effect: Allow
+            Action: 
+              - cognito-idp:AdminCreateUser
+            Resource: "*"
 
+  SendEmailFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: makefile
+    Properties:
+      Handler: ofvi-send-email
+      Runtime: go1.x
+      MemorySize: 128    
+      Timeout: 60
+      Environment:
+        Variables:
+          BucketName: !Ref TemplateBucket
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - S3ReadPolicy:
+            BucketName: !Ref TemplateBucket
+        - Statement:
+          - Sid: SESPolicy
+            Effect: Allow
+            Action:
+              - ses:SendEmail
+            Resource: '*' 
+      Events:
+        CustomMessage:
+          Type: Cognito
+          Properties:
+            UserPool: !Ref UserPool
+            Trigger: CustomMessage
 
+  
 
   ###############      
   ## LOGS      ##
