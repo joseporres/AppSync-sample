@@ -177,5 +177,6 @@ type Query {
 
 type Mutation{
     storeSettings(settings: SettingsOBInput!): Execution,
+    #QUITAR INPUT USERNAME Y CAMBIAR A OUTPUT A SETTINGS
     activeUserStatus(username: String): SettingsOB
 }

@@ -437,6 +437,7 @@ Resources:
             UserPool: !Ref UserPool
             Trigger: CustomMessage
 
+##CAMBIAR ctx.args.username ---> ctx.identity.username
   UpdateUserStatusResolver:
     Type: AWS::AppSync::Resolver
     DependsOn: AppSyncSchema
